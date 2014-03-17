@@ -50,7 +50,7 @@ While I, personally, don't like the `performSelector:` group of methods, I was c
 }
 ```
 
-32 bit, iOS 6 console output is[^64bit-integer]
+32 bit, iOS 6 console output is
 
 ```
 Rect value NSRect: {3, 14}, {15, 92} 0xacb8820
@@ -61,7 +61,7 @@ Boolean value 1 0x30d795c
 Boolean: YES
 ```
 
-64 bit, iOS 7.1 console output is
+Replacing string format for integer with `%li`, console output for 64 bit, iOS 7.1 is
 
 ```
 Rect value NSRect: {3, 14}, {15, 92} 0x10e635bb0
@@ -81,5 +81,3 @@ Only after that I went into the documentation for the `performSelector:withObjec
 Here is a [stack overflow answer](http://stackoverflow.com/questions/904515/how-to-use-performselectorwithobjectafterdelay-with-primitive-types-in-cocoa/1735045#1735045), illustrating usage of `NSInvocation`. I believe that invocation doesn't produce ARC-friendly code in a sense of an arbitrary executed code, but the application for invocation is much broader, while `dispatch_after` solves a very particular task.
 
 Another case of RTFM. What still doesn't make much sense is that structure randomly works with 64 bit system.
-
-[^64bit-integer]: Replacing string format for integer with `%li`.
