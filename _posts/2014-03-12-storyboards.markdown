@@ -1,8 +1,6 @@
 ---
 layout: post
 title:  "Storyboards"
-date:   2014-03-17 13:26:31
-categories: 
 ---
 
 I've seen people quoting this [Stack Overflow answer](http://stackoverflow.com/questions/9404471/when-to-use-storyboard-and-when-to-use-xibs/19457257#19457257) a lot when they need to convince someone in not using storyboards. I understand that it's a somewhat a flamewar topic, but I'd like to address the points author makes.
@@ -56,8 +54,6 @@ I can see author of the answer using assembly to write his next submission to th
 > Storyboards don't allow you to add a subview to a UIImageView
 
 Normally, I would say if you're adding a subview to `UIImageView`, it's a good sign that you better to have a custom class instead. It's no coincidence that `userInteractionEnabled` is `NO` by default for image views, if you're adding subview just for the sake of alignment, consider using AutoLayout instead.
-
-# 2
 
 What wasn't mentioned, is that storyboards (and nibs) introduce a problem of responsibility separation. It becomes yet another point where the views (and now with segues, even more than just views) might be configured. But, like with other code practices such as [`UIAppearance`](https://developer.apple.com/library/ios/documentation/uikit/reference/UIAppearance_Protocol/Reference/Reference.html) or IOC, it's all about being consistent.
 

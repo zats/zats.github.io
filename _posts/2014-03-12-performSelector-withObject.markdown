@@ -1,8 +1,6 @@
 ---
 layout: post
 title:  "RTFM performSelector:withObject:"
-date:   2014-03-12 13:26:31
-categories:
 ---
 
 Recently, while going through the code review, I stumbled upon a curious bug that manifested itself on iOS 7.1 64 bit simulator. A committer had a boolean setter that he wanted to call with a delay, so he had a following code
