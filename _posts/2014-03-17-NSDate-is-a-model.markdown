@@ -3,13 +3,15 @@ layout: post
 title:  "NSDate is a model not a view"
 ---
 
-Following code `[[NSDate date] dateByAddingTimeInterval:3 * 60 * 60]` is a really common attempt to offset current date by 3 hours from GMT.  Despite developer's expectations, this date does not represent current time in GMT+3 time zone. So why is all the confusion?
+Following code `[[NSDate date] dateByAddingTimeInterval:60 * 60]` is a really common attempt to get a current date in, let's say, France. Despite developer's expectations, it does not represent current time in GMT+1 time zone. So where is all the confusion coming from?
 
 Let's execute `po [NSDate date]` in Xcode console. What are we seeing?
 
-Not `1395089079` but `2014-03-17 20:53:28 +0000`. Quick look in Xcode doesn't make it easier: `NSDate *date = [NSDate date];` is presented as `2014-03-17 22:53:28 IST`. Which is even worse, it shows the time zone of the developer. I believe, this is what trips people up.
+Not `1395089079` but `2014-03-17 20:53:28 +0000`. Quick look in Xcode doesn't make it clearer: `NSDate *date = [NSDate date];` is presented as `2014-03-17 22:53:28 IST` (It shows the date as it appears in the developer's time zone). I believe, this is what trips people up.
 
-In MVC sense of things, you have an `NSDate` object that is your model. It is agnostic to the concept of `NSTimeZone`. Then you have a group of APIs dealing with time zones: `NSCalendar`, `NSDateComponent`, `NSDateFormetter` etc. Those are your views: they perform calculation or "render" date into a certain presentation using specified calendar, time zone, locale etc.
+In MVC sense of things, you have an `NSDate` object representing a model. It is agnostic to the concept of time zone or particular localization. Then, you have a group of APIs dealing with displaying or parsing dates and performing calculations on them: `NSCalendar`, `NSDateComponent`, `NSDateFormetter` etc. Those are your "views".
+
+Just as you wouldn't store view in your database, don't store or pass around serialized dates, use NSDate instead – in the end of the day that's why it exists, to provide a good abstraction of a unix timestamp, decoupled from the way you present it to the user.
 
 To summarize, as soon as you received a date from web API, parse it to `NSDate`. Or, if API utilizes unix timestamps, use `[NSDate dateWithTimeIntervalSince1970:]`, just keep in mind that it expects seconds. Just before presentation to the user, render the date object into the human readable (meaning localized, time zone aware) string.
 
