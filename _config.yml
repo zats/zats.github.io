@@ -21,7 +21,7 @@ paginate:         5
 version:          1.0.0
 
 github:
-  repo:           https://github.com/poole/lanyon
+  repo:           https://github.com/zats
 
 redcarpet:
   extensions: ['autolink', 'fenced_code_blocks', 'tables', 'footnotes', 'prettify']
