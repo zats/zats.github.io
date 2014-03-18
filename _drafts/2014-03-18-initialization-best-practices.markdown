@@ -30,3 +30,7 @@ Funny enough, note in the docs says
 > Although, for the sake of simplicity, this example returns nil if the parameter is nil, the better Cocoa practice is to raise an exception
 
 Have never seen anyone doing that
+
+# Where to go from here
+
+Lovely post by folks from twitter about designated initializers https://blog.twitter.com/2014/how-to-objective-c-initializer-patterns
