@@ -292,6 +292,9 @@ tbody tr:nth-child(odd) th {
   letter-spacing: 0;
 }
 
+.social-links {
+  font-size: 75%;
+}
 
 /*
  * Posts and pages
