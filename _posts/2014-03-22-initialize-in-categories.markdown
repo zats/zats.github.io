@@ -55,4 +55,4 @@ What are we going to see in the console?
 
 Something to be aware of when abusing `initialize` method. I'd try to avoid using it at all – if two categories override `initialize` method, there is no guarantee that your method is going to be called. Use `+load` instead.
 
-Update: a very good article on the same topic by amazing bbum http://www.friday.com/bbum/2009/09/06/iniailize-can-be-executed-multiple-times-load-not-so-much/
+**Update** a very good article on this topic was published in 2009 by bbum: http://www.friday.com/bbum/2009/09/06/iniailize-can-be-executed-multiple-times-load-not-so-much/
