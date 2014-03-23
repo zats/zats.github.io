@@ -54,3 +54,5 @@ What are we going to see in the console?
 `+ initialize` is being fired for every subclass of your category class. Not really documented behavior but makes sense. But remember, we haven't imported category in our app delegate, nor mentioned it in any imported class.
 
 Something to be aware of when abusing `initialize` method. I'd try to avoid using it at all – if two categories override `initialize` method, there is no guarantee that your method is going to be called. Use `+load` instead.
+
+Update: a very good article on the same topic by amazing bbum http://www.friday.com/bbum/2009/09/06/iniailize-can-be-executed-multiple-times-load-not-so-much/
