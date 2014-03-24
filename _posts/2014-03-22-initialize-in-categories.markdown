@@ -2,7 +2,7 @@
 layout: post
 title:  "+initialize in categories"
 ---
-An interesting quirk for `+ initialize` method when implemented in a category. Since documentation doesn't really explain what is the behavior of the method when implemented in categories, so we have to figure out by ourselves.
+An interesting quirk for `+ initialize` method when implemented in a category. Documentation doesn't really explain what is the behavior of the method when implemented in categories, let's figure it out by ourselves.
 
 > The runtime sends `initialize` to each class in a program just before the class, or any class that inherits from it, is sent its first message from within the program […] Superclasses receive this message before their subclasses. The superclass implementation may be called multiple times if subclasses do not implement `initialize` — the runtime will call the inherited implementation — or if subclasses explicitly call `[super initialize]`.
 
