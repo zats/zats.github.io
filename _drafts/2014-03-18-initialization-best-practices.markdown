@@ -65,4 +65,5 @@ Have never seen anyone doing that
 
 # Where to go from here
 
-Lovely post by folks from twitter about designated initializers https://blog.twitter.com/2014/how-to-objective-c-initializer-patterns
+* Lovely post by folks from twitter about designated initializers https://blog.twitter.com/2014/how-to-objective-c-initializer-patterns
+* An answer by bbum if it's ok to call just `[MyClass alloc]` instead of `[[MyClass alloc] init]` if your init doesn't do much http://stackoverflow.com/questions/22662810/if-i-do-nothing-in-init-is-it-the-same-as-just-calling-myclass-alloc/22699634#22699634
