@@ -57,8 +57,8 @@ Just several things to note:
 
 By implementing initializers like that I get the same behavior as when using `NSArray`:
 
-* Address the base class directly and you get a default subclass implementation.
-* Address a (non-default) subclass with initialization method and you will "follow through" up to the `NSObject` in initialization chain.
+* Initialize the base class directly and you get a default subclass implementation.
+* Initialize a (non-default) subclass with initialization method and you will "follow through" the initialization chain up to the `NSObject`.
 
 Now I can safely add convenience methods such as
 
