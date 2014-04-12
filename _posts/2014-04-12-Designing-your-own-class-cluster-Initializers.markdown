@@ -76,4 +76,9 @@ Now I can safely add convenience methods such as
 }
 ```
 
-I'm still not sure why `NSArray`, for example, has two designated initializers. Solution, implemented above, works for my current (limited) set of use-cases and I will keep investigation.
+TODOs:
+
+* I'm still not sure why `NSArray`, for example, has two designated initializers.
+* If I'd have a public subclass to my cluster class (e.g. what `NSMutableArray` to `NSArray`) and several private implementations for both,  would adding `if [self isMemberOfClass:[NSMutableArray class]]` to a public subclass be enough?
+
+Solution, implemented above, works for my current (limited) set of use-cases and I will keep investigation.
