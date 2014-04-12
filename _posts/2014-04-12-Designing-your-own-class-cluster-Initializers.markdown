@@ -16,7 +16,7 @@ So, I decided to find my own way of doing things. Starting point was `NSArray.h`
 // ...
 @end
 ```
-So two designated initializers, ha? Documentation is not conclusive either, it only mentions subclassing class clusters and states that you have to override designated constructors.
+So two designated initializers, ha? Documentation is [not conclusive](https://developer.apple.com/library/mac/documentation/general/conceptual/devpedia-cocoacore/ClassCluster.html) [either](https://developer.apple.com/library/ios/documentation/general/conceptual/CocoaEncyclopedia/ClassClusters/ClassClusters.html), it only mentions subclassing class clusters and states that you have to override designated constructors.
 
 Let's try to deconstruct what's happening when we initialize class cluster, for example following code
 
@@ -52,7 +52,7 @@ So how do we insure this behavior without causing nasty infinite lopps? Well, it
 Just several things to note:
 
 * Superclass has to know who is the "default implementation" subclass.
-* I don't have the regular `if (!self)...` routine since I do nothing in the "abstract" base class.
+* I don't have the regular `if (!self) return nil;` routine since I do nothing in the "abstract" base class.
 * I check for `isMemberOfClass:` rather then `isKindOfClass:` to enbale strict equality.
 
 By implementing initializers like that I get the same behavior as when using `NSArray`:
