@@ -56,6 +56,7 @@ Just several things to note:
 * I check for `isMemberOfClass:` rather then `isKindOfClass:` to enbale strict equality.
 
 By implementing initializers like that I get the same behavior as when using `NSArray`:
+
 * Address the base class directly and you get a default subclass implementation.
 * Address a (non-default) subclass with initialization method and you will "follow through" up to the `NSObject` in initialization chain.
 
