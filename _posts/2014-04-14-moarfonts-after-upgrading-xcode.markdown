@@ -15,3 +15,5 @@ moarfonts reset
 ```
 
 That's it. Clean Derived Data and build folder, restart Xcode and re-run your build. Hope it helps!
+
+**Update**: Cédric Luthi published [troubleshooting guide](http://pitaya.ch/moarfonts/#troubleshooting) you should refer to
