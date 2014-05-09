@@ -4,7 +4,7 @@ title: "NSArray's privates"
 date: 2014-05-09
 ---
 
-Some methods that didn't make it in the public API, however they are easy to implement. Most of them are based on `NSFastEnumeration`.
+Some methods that didn't make it in the `NSArray`'s public API, however they are easy to implement. Most of them are based around `NSFastEnumeration`.
 
 # `containsObjectIdenticalTo:`
 
