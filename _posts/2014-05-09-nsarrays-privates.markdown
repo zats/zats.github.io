@@ -7,7 +7,7 @@ date: 2014-05-09
 I remember reading somewhere how at Apple, API goes through several stages of internal usage without publishing it to 3rd party developers. It helps to test it properly, and helps to make sure that the names are well chosen (!).
 Here is a rundown of some methods that didn't make it in the `NSArray`'s public API (and probably won't).
 
-The good news is that most of them are based around `NSFastEnumeration` `for in` loop and quite straight forward to implement if want to. Just, please, don't forget to prefix it with your branded `xyz_`. Or even better, call them something else all together to avoid potential problems when submitting the app.
+The good news is that most of them are based around `NSFastEnumeration` `for in` loop and quite straight forward to implement if want to. Just, please, don't forget to prefix it with your branded `xyz_`. Or even better, call them something different all together to avoid potential problems when submitting the app.
 
 # `containsObjectIdenticalTo:`
 
