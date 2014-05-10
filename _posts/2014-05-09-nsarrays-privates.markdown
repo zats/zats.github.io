@@ -4,6 +4,8 @@ title: "NSArray's privates"
 date: 2014-05-09
 ---
 
+> Several private methods from `NSArray` API, complexity analysis, and how to implement it yourself.
+
 I remember reading somewhere how at Apple, API goes through several stages of internal usage without publishing it to 3rd party developers. It helps to test it properly, and helps to make sure that the names are well chosen (!).
 Here is a rundown of some methods that didn't make it in the `NSArray`'s public API (and probably won't).
 
