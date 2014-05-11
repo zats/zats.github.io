@@ -6,13 +6,13 @@ pygments:         true
 permalink:        pretty
 
 # Setup
-title:            Sasha Zats
+title:            Sash Zats
 tagline:          'iOS Development, UX, meat sprinkles'
 description:      'A reserved <a href="http://jekyllrb.com" target="_blank">Jekyll</a> theme that places the utmost gravity on content with a hidden drawer. Made by <a href="https://twitter.com/mdo" target="_blank">@mdo</a>.'
 url:              http://zats.io
 
 author:
-  name:           'Sasha Zats'
+  name:           'Sash Zats'
   url:            https://zats.io
 
 paginate:         5
@@ -24,4 +24,4 @@ github:
   repo:           https://github.com/zats
 
 redcarpet:
-  extensions: ['autolink', 'fenced_code_blocks', 'tables', 'footnotes', 'prettify']
+  extensions:      ['autolink', 'fenced_code_blocks', 'tables', 'footnotes', 'prettify']
