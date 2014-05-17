@@ -43,6 +43,7 @@ Now it's important to keep in mind that you want to keep this code wrapped in `#
 Is there a simpler solution? Of course:) Sadly it is as not production safe as the first one, but a simpler one. Just override `setValue:forUndefinedKey:` in a category of `UIViewController`!
 
 ```objective-c
+#ifdef DEBUG
 @implementation UIViewController (NicerStoryboardCrashes)
 
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key {
@@ -53,6 +54,7 @@ Is there a simpler solution? Of course:) Sadly it is as not production safe as t
 }
 
 @end
+#endif
 ```
 
 As I mentioned before, this solution is not a production grade because in this case we generalize too much: assuming that any undefined key coming our way was caused by storyboard outlet mismatch, which is wrong.
