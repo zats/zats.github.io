@@ -1,6 +1,7 @@
 # Dependencies
-markdown:         redcarpet
-pygments:         true
+markdown: kramdown
+# markdown:         redcarpet
+# pygments:         true
 
 # Permalinks
 permalink:        pretty
@@ -23,5 +24,5 @@ version:          1.0.0
 github:
   repo:           https://github.com/zats
 
-redcarpet:
-  extensions:      ['autolink', 'fenced_code_blocks', 'tables', 'footnotes', 'prettify']
+# redcarpet:
+#   extensions:      ['autolink', 'fenced_code_blocks', 'tables', 'footnotes', 'prettify']
