@@ -6,6 +6,7 @@ date: 2014-04-13
 Just a brief thought on [Preservation & Restoration API](https://developer.apple.com/library/ios/documentation/iphone/conceptual/iphoneosprogrammingguide/StatePreservation/StatePreservation.html). It occurred to me that extending this technology to Mac OS might give us much more seamless experience when switching between apps on Mac OS and iOS apps.
 
 Possible applications are:
+
 * Moving your Face Time call from your laptop to your phone when you have to run to work.
 * Peeking up a draft of a document you sketched on your iPad lying on the couch.
 * Continuing the song or a movie you were enjoying on your desktop when you have to run.
