@@ -21,10 +21,10 @@ _O(n)_, calls [_`initWithArray:range:copyItems:`_](#initwitharrayrangecopyitems)
 _O(n)_, calls [`initWithObjects:count:`](#initwithobjectscount).
 
 ## `initWithObjects:count:`
-_O(n)_, where _n_ is a number of objects, sets indexed ivars, calls [_`__new:::`_](new).
+_O(n)_, where _n_ is a number of objects, sets indexed ivars, calls [_`__new:::`_](#new).
 
 ## _`initWithArray:range:copyItems:`_
-_O(n)_, calls [`initWithObjects:count:`](initwithobjectscount).
+_O(n)_, calls [`initWithObjects:count:`](#initwithobjectscount).
 
 ## _`__new:::`_
 _O(n)_, where _n_ is a number of passed objects, enumerated using `do {} while` loop.
@@ -35,15 +35,28 @@ This is a strong suit of arrays, most of the methods require _O(1)_ time. At fir
 
 The only exception is `containsObject:` group of methods, assuming we have no additional knowledge about the array internals, we have to iterate over all elements to probe for equality.
 
-| Method | Complexity | Notes |
-| :- | :-: | :- |
-| `containsObject:` | _O(n)_ | where _n_ is the number of objects in the receiver, enumerated using `do {} while` loop |
-| `count` | _O(1)_ | |
-| `getObjects:range:` | _O(1)_ | assuming subsequential `memmove` call has complexity of _O(1)_[^memmove-runtime-complexity] |
-| `firstObject` | _O(1)_ | `objectAtIndex:` |
-| `lastObject` | _O(1)_ | `objectAtIndex:` |
-| `objectAtIndex:` | _O(1)_ | unlike Core Foundation, `__NSArrayI` uses `object_getIndexedIvars` instead of buckets, mutable `__NSArrayM` uses pointer math on `id *_list` |
-| `objectsAtIndexes:` | _O(n)_ | where _n_ is a number of indexes, enumerated using `do {} while` loop |
+## `containsObject:`
+_O(n)_, where _n_ is the number of objects in the receiver, enumerated using `do {} while` loop.
+
+## `count`
+_O(1)_ due to caching of the array size.
+
+## `getObjects:range:`
+_O(1)_, assuming subsequential `memmove` call has complexity of _O(1)_[^memmove-runtime-complexity].
+
+## `firstObject`
+_O(1)_, calls [`objectAtIndex:`](#objectatindex).
+
+## `lastObject`
+_O(1)_, calls [`objectAtIndex:`](#objectatindex).
+
+## `objectAtIndex:`
+_O(1)_, as we established, Core Foundation `CFArrayRef` and, therefore, Cocoa wrapper _`__NSCFArray`_ use pointer math to access buckets with objects. Mutable _`__NSArrayM`_ uses pointer math on `id *_list` ivar which is somewhat similar. Only immutable _`__NSArrayI`_ can afford using `object_getIndexedIvars` instead.
+
+## `objectsAtIndexes:`
+_O(n)_, where _n_ is a number of continues ranges in the supplied index set. Let me clarify. `NSIndexSet` has some, sadly, private APIs. Remember how when we print a description of an index set, we see a nice list of ranges instead of continues list of indexes? That is actually APIs in action: two private methods `rangeCount` and `rangeAtIndex:`.
+
+Implementation simply iterates over all ranges and, combining with [`getObjects:range:`](#getobjectsrange), it allows to fetch all required elements in _O(n)_ where _n_ is a number of ranges. Comparing to _O(n)_ where _n_ is a number of all indexes in index set, and giving the fact that a typical use case involves continues ranges rather of sparse indexes it turns out to be quite a time-saver.
 
 # Finding Objects in an Array
 
@@ -53,34 +66,58 @@ Just like with `containsObject:`, when it comes to finding indexes for given obj
 _O(n)_ , where _n_ is a number of elements in the receiver array, iterated using `do {} while` loop.
 
 ## `indexOfObject:inRange:`
-_O(n)_, where _n_ is a length of the passed range, iterated using `do {} while` loop
-| `indexOfObjectIdenticalTo:` | _O(n)_ | where _n_ is a number of elements in the receiver array; it's famous for being faster than `indexOfObject:` due to utilization of a comparison by reference (`==`) instead of comparison by value  (`isEqual:`), using fast enumeration over all elements in the receiver |
-| `indexOfObjectIdenticalTo: inRange:` |  _O(n)_ | where _n_ is a length of the passed range |
-| `indexOfObjectPassingTest:` | _O(?)_ | calls `indexOfObjectWithOptions: passingTest:` with no options specified |
-| `indexOfObjectWithOptions: passingTest:` | _O(n)_ | where _n_ is a number of elements in the receiver; calls _`_NSArrayGetIndexPassingTest`_, that, in its turn, uses fast enumeration |
-| `indexOfObjectAtIndexes: options: passingTest:` | _O(n)_ | where _n_ is a number of indexes in the `indexSet` parameter; calls _`_NSArrayGetIndexPassingTest`_, that, in its turn, uses fast enumeration |
-| `indexesOfObjectsPassingTest:` | _O(n)_ | calls `indexesOfObjectsWithOptions: passingTest:` with no options specified |
-| `indexesOfObjectsWithOptions: passingTest:` | _O(n)_ | calls _`_NSArrayGetIndexesPassingTest`_ |
-| `indexesOfObjectsAtIndexes: options: passingTest:` | _O(n)_ | calls _`_NSArrayGetIndexesPassingTest`_ |
-| `indexOfObject: inSortedRange: options: usingComparator:` | _O(log n)_ |  |
+_O(n)_, where _n_ is a length of the passed range, iterated using `do {} while` loop.
+
+## `indexOfObjectIdenticalTo:`
+_O(n)_, where _n_ is a number of elements in the receiver array; it's famous for being faster than `indexOfObject:` due to utilization of a comparison by reference (`==`) instead of comparison by value  (`isEqual:`), using fast enumeration over all elements in the receiver.
+
+## `indexOfObjectIdenticalTo:inRange:`
+_O(n)_, where _n_ is a length of the passed range.
+
+## `indexOfObjectPassingTest:`
+ _O(n)_, calls [`indexOfObjectWithOptions:passingTest:`](#indexofobjectwithoptionspassingtest) with no options specified.
+
+## `indexOfObjectWithOptions:passingTest:`
+_O(n)_, where _n_ is a number of elements in the receiver; calls _`_NSArrayGetIndexPassingTest`_, that, in its turn, uses fast enumeration.
+
+## `indexOfObjectAtIndexes:options:passingTest:`
+_O(n)_, where _n_ is a number of indexes in the `indexSet` parameter; calls _`_NSArrayGetIndexPassingTest`_, that, in its turn, uses fast enumeration.
+
+## `indexesOfObjectsPassingTest:`
+_O(n)_, calls [`indexesOfObjectsWithOptions:passingTest:`](#indexesofobjectswithoptionspassingtest)(plural not singular) with no options specified.
+
+## `indexesOfObjectsWithOptions:passingTest:`
+_O(n)_, calls _`_NSArrayGetIndexesPassingTest`_.
+
+## `indexesOfObjectsAtIndexes:options:passingTest:`
+_O(n)_, calls _`_NSArrayGetIndexesPassingTest`_.
+
+## `indexOfObject:inSortedRange:options:usingComparator:`
+_O(log n)_
 
 # Comparing Arrays
 
 This group of methods have to iterate over all elements of the receiver array. In Core Foundation domain, specify your own `CFArrayCallBacks.equal` function to implement custom logic for using `CFEqual`.
 
-| Method | Complexity | Notes |
-| :- | :-: | :- |
-| `firstObjectCommonWithArray:` | _O(n+m)_ | where _n_ is a number of elements in the receiver array and _m_ is a number of element in the parameter array. If this method would be implemented as iteration over elements with `[array containsObject:element]`, it would take _O(nm)_. Instead `NSSet` from the argument array instead, it gives us a _O(1)_ `containsObject:`. |
-| `isEqualToArray:` | _O(n)_ | where _n_ is a number of elements in the receiver array |
+## `firstObjectCommonWithArray:`
+_O(n+m)_, where _n_ is a number of elements in the receiver array and _m_ is a number of element in the parameter array. If this method would be implemented as iteration over elements with `[array containsObject:element]`, it would take _O(nm)_. Instead, when converting parameter array to `NSSet` (running complexity _O(m)_, where _m_ is a number of elements in the array), we gain _O(1)_ `containsObject:`, that allows us to reduce overall running complexity of the method.
+
+## `isEqualToArray:`
+_O(n)_, where _n_ is a number of elements in the receiver array.
 
 # Deriving New Arrays
 
-| Method | Complexity | Notes |
-| :- | :-: | :- |
-| `arrayByAddingObject:` | _O(n)_ | where _n_ is a new number of elements, calls `getObjects:range` to get objects, `arrayWithObjects:count:` to create new array |
-| `arrayByAddingObjectsFromArray:` | _O(n+m)_ | where _n_ is a number of elements in the receiver and _m_ is the number of the elements in the argument array, calls `getObjects:range` to get objects, `arrayWithObjects:count:` to create new array |
-| `filteredArrayUsingPredicate:` | _O(n)_ | where _n_ is a number of elements in the receiver |
-| `subarrayWithRange:` | _O(n)_ | where _n_ is the length of the `range`; uses `getObjects:range:` and `arrayWithObjects:count:` |
+## `arrayByAddingObject:`
+_O(n)_, where _n_ is a new number of elements, calls `getObjects:range` to get objects, `arrayWithObjects:count:` to create new array.
+
+## `arrayByAddingObjectsFromArray:`
+_O(n+m)_, where _n_ is a number of elements in the receiver and _m_ is the number of the elements in the argument array, calls `getObjects:range` to get objects, `arrayWithObjects:count:` to create new array.
+
+## `filteredArrayUsingPredicate:`
+_O(n)_, where _n_ is a number of elements in the receiver.
+
+## `subarrayWithRange:`
+_O(n)_, where _n_ is the length of the `range`; uses `getObjects:range:` and `arrayWithObjects:count:`.
 
 # Sorting
 
