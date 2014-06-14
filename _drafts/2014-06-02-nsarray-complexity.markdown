@@ -78,22 +78,28 @@ _O(n)_, where _n_ is a length of the passed range.
  _O(n)_, calls [`indexOfObjectWithOptions:passingTest:`](#indexofobjectwithoptionspassingtest) with no options specified.
 
 ## `indexOfObjectWithOptions:passingTest:`
-_O(n)_, where _n_ is a number of elements in the receiver; calls _`_NSArrayGetIndexPassingTest`_, that, in its turn, uses fast enumeration.
+_O(n)_, where _n_ is a number of elements in the receiver; calls [_`__NSArrayGetIndexPassingTest`_](#nsarraygetindexpassingtest), that, in its turn, uses fast enumeration.
 
 ## `indexOfObjectAtIndexes:options:passingTest:`
-_O(n)_, where _n_ is a number of indexes in the `indexSet` parameter; calls _`_NSArrayGetIndexPassingTest`_, that, in its turn, uses fast enumeration.
+_O(n)_, where _n_ is a number of indexes in the `indexSet` parameter; calls [_`__NSArrayGetIndexPassingTest`_](#nsarraygetindexpassingtest), that, in its turn, uses fast enumeration.
 
 ## `indexesOfObjectsPassingTest:`
-_O(n)_, calls [`indexesOfObjectsWithOptions:passingTest:`](#indexesofobjectswithoptionspassingtest)(plural not singular) with no options specified.
+_O(n)_, calls [`indexesOfObjectsWithOptions:passingTest:`](#indexesofobjectswithoptionspassingtest) with no options specified.
 
 ## `indexesOfObjectsWithOptions:passingTest:`
-_O(n)_, calls _`_NSArrayGetIndexesPassingTest`_.
+_O(n)_, calls [_`__NSArrayGetIndexesPassingTest`_](#nsarraygetindexespassingtest).
 
 ## `indexesOfObjectsAtIndexes:options:passingTest:`
-_O(n)_, calls _`_NSArrayGetIndexesPassingTest`_.
+_O(n)_, calls [_`__NSArrayGetIndexesPassingTest`_](#nsarraygetindexespassingtest).
 
 ## `indexOfObject:inSortedRange:options:usingComparator:`
-_O(log n)_
+_O(log n)_. This is a fairly classical implementation of the binary search on the sorted array. It serves two purposes: first is to find an existent element of the array and the second one, personally more interesting: where to insert supplied element to maintain array sorted.
+
+## _`__NSArrayGetIndexPassingTest`_
+_O(n)_, where _n_ is a number of elements in the supplied array. When no `NSEnumerationOptions` supplied, this function simply iterates over all elements using `for in` and returns first matching element
+
+## _`__NSArrayGetIndexesPassingTest`_
+_O(n)_, where _n_ is a number of elements in the supplied array. When no `NSEnumerationOptions` supplied, this function simply iterates over all elements using `for in` and adds elements into an index set.
 
 # Comparing Arrays
 
@@ -121,22 +127,43 @@ _O(n)_, where _n_ is the length of the `range`; uses `getObjects:range:` and `ar
 
 # Sorting
 
-Sorting methods in Core Foundation rely on the private `CFSortIndexes` function declared in `CFSortFunctions.m`. Since it accepts list of indexes and not a particular data structure, it is useful not only for `NSArray` but also for `NSSet`, `NSSortedSet` and `NSDictionary`.
+Almost all array sort methods rely on Core Foundation's `CFMergeSortArray`, that, in turn, uses `CFSortIndexes` implemented in `CFSortFunctions.m`. What is interesting about `CFSortIndexes`, it accepts list of indexes and not a particular data structure, so it can be reused for any data structure as long as you can map indexes to particular element. That allows to reuse same function not only for `NSArray`, but also for `NSSet`, `NSSortedSet` and `NSDictionary`.
 
-Function, in turn, sorts lists up to 3 elements in place and, if the argument list is longer, follows classical merge sort algorithm. `__CFSimpleMerge` private function actually performs sort and merge and, according to the documentation, performs much better than average _O(n log n)_
+`CFSortIndexes` uses `__CFSimpleMergeSort` when on iPhone or no concurrent options were passed. This function sorts lists up to 3 elements in place and, or follows classical merge sort algorithm if number of elements is greater than 3. `__CFSimpleMerge`, responsible for the "conquer" part of the algorithm, claims to perform better than average _O(n log n)_ according to the comments.
 
-| Method | Complexity | Notes |
-| :- | :-: | :- |
-| `sortedArrayHint` | _O(n<sup>2</sup>)_ | this seem to be the case because of the nested loop over all elements of the receiver |
-| `sortedArrayUsingFunction: context:` | | calls `sortedArrayWithOptions:usingComparator:` |
-| `sortedArrayUsingFunction: context: hint:` | _O(n)_ | where _n_ is a number of elements in the receiver (due to previously calculated `hint` blob) |
-| `sortedArrayUsingDescriptors:` | _O(n log n)_ | uses merge sort behind the scenes |
-| `sortedArrayUsingSelector:` | | |
-| `sortedArrayUsingComparator:` | | calls _`sortedArrayFromRange: options: usingComparator:`_ |
-| `sortedArrayWithOptions: usingComparator:` | _O(log<sup>2</sup> n)_ | if odd-even merge sort was used |
-| _`sortedArrayFromRange: options: usingComparator:`_ | | |
+## `sortedArrayHint`
+_O(n)_, where _n_ is a number of elements in the receiver. This method should be performed on a strictly sorted array, so you can reuse result with [`sortedArrayUsingFunction:context:hint:`](#sortedarrayusingfunctioncontexthint).
+
+## `sortedArrayUsingFunction:context:`
+calls `sortedArrayWithOptions:usingComparator:`
+
+## `sortedArrayUsingFunction:context:hint:`
+_O(P log P + n)_ where _P_ is a number of changes since `sortedArraHint` was called on sorted array and _n_ is a number of elements in the receiver.
+
+This is a very interesting method. I suggest reading [Apple's documentation](https://developer.apple.com/library/ios/documentation/cocoa/reference/foundation/classes/NSArray_Class/NSArray.html#//apple_ref/doc/uid/20000137-DontLinkElementID_73). In short, if you had a sorted array of _n_ elements and performed _P_ operations (insert, delete, swap) on it, where _P_ is much less than _n_, this method should work much faster than [`sortedArrayUsingFunction:context:`](sortedarrayusingfunctioncontext).
+
+Sadly, all my tests failed to demonstrate performance benefit described above. When testing Apple's [sample code](https://developer.apple.com/library/mac/Documentation/Cocoa/Conceptual/Collections/Articles/Arrays.html#//apple_ref/doc/uid/20000132-SW8) regular `sortedArrayUsingFunction:context:` seems to be faster than its hinted version.
+
+Besides, the problem domain seems close to insertion sort that might be more effective in this case, also you might want to use [`indexOfObject:inSortedRange:options:usingComparator:`](#indexofobjectinsortedrangeoptionsusingcomparator) with `NSBinarySearchingInsertionIndex` option to find suggested index to insert the new element.
+
+## `sortedArrayUsingDescriptors:`
+_O(n log n)_, calls `CFMergeSortArray`
+
+## `sortedArrayUsingSelector:`
+_O(n log n)_, calls [`sortedArrayWithOptions:usingComparator:`](#sortedarraywithoptionsusingcomparator)
+
+## `sortedArrayUsingComparator:`
+_O(n log n)_ calls [_`sortedArrayFromRange:options:usingComparator:`_](#sortedarrayfromrangeoptionsusingcomparator).
+
+## `sortedArrayWithOptions:usingComparator:`
+_O(n log n)_, calls [_`sortedArrayFromRange:options:usingComparator:`_](#sortedarrayfromrangeoptionsusingcomparator).
+
+## _`sortedArrayFromRange:options:usingComparator:`_
+_O(n log n)_, calls `_CFSortIndexes` with elements from specified `range`, effectively performing merge sort.
+
 
 [^find-index-of-element]: Assuming we do not have any additional information about the array. For sorted array use `indexOfObject:inSortedRange:options:usingComparator:`.
 [^method-legend]: Methods in italic are private, i.e. `publicBoringMethod:` vs _`privateAwesomeMethod:`_.
 [^array-callbacks-structure]: see `CFArrayCallBacks` structure in `CFArray.h` file
 [^memmove-runtime-complexity]: This is not the case, `memmove` actually has complexity of _O(n)_, where _n_ is a number of bytes to copy, but in my tests it was always neglectibly small value comparing to the operations performed by Cocoa.
+[^sorted-array-hint-endians]: Consider different edians on different platform, i.e. Mac OS X utilizes little endians.
