@@ -5,7 +5,7 @@ date: 2014-06-02
 ---
 
 Most of the time we take system classes for granted. Methods we call every day in hundreds might hide complexity we didn't anticipate. This post is my attempt to clarify running complexity of the most common `NSArray` methods. I used [Hopper Disassembler](http://www.hopperapp.com) extensively while writing this post, and if you are into this kind of forensic adventures, you should definitely give it a try.
-<!--more-->
+<excerpt/>
 
 # Initializer
 

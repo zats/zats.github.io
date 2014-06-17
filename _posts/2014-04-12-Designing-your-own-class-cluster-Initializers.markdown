@@ -1,10 +1,13 @@
 ---
 layout: post
 title: "Designing your own class cluster. Initializers."
+date: 2014-04-12
 ---
+
 I found myself creating a class cluster. Not just a notoriously studied subclass of `NSArray` or `UIButton` but a class cluster base class itself.
 
-After fruitless attempts to google "the right way" of creating such a class, I found little to none information (probably due to lack of a correct search term).
+After fruitless attempts to google, I found little to none information (probably due to lack of the correct search term) regarding "the right way" of creating such a class.
+<excerpt/>
 
 So, I decided to find my own way of doing things. Starting point was `NSArray.h`:
 

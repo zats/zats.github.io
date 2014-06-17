@@ -1,37 +1,22 @@
-# Dependencies
-markdown: kramdown
-
-excerpt_separator: <!--more-->
-
-kramdown:
-  auto_ids: true
-  footnote_nr: 1
-  entity_output: as_char
-  toc_levels: 1..6
-  smart_quotes: lsquo,rsquo,ldquo,rdquo
-  use_coderay: false
-  input: GFM
-
-# Permalinks
-permalink:        pretty
-
-# Setup
-title:            Sash Zats
-tagline:          'iOS Development, UX, meat sprinkles'
-description:      'A reserved <a href="http://jekyllrb.com" target="_blank">Jekyll</a> theme that places the utmost gravity on content with a hidden drawer. Made by <a href="https://twitter.com/mdo" target="_blank">@mdo</a>.'
-url:              http://zats.io
+title:                Sash Zats
+tagline:              'The worst player in the band should be you'
+description:          'A reserved <a href="http://jekyllrb.com" target="_blank">Jekyll</a> theme that places the utmost gravity on content with a hidden drawer. Made by <a href="https://twitter.com/mdo" target="_blank">@mdo</a>.'
+url:                  http://zats.io
 
 author:
-  name:           'Sash Zats'
-  url:            https://zats.io
+  name:               Sash Zats
+  url:                https://zats.io
 
-paginate:         5
-
-# Custom vars
-version:          1.0.0
+version:              1.0.0
 
 github:
-  repo:           https://github.com/zats
+  repo:               https://github.com/zats
 
-# redcarpet:
-#   extensions:      ['autolink', 'fenced_code_blocks', 'tables', 'footnotes', 'prettify']
+paginate:             5
+
+markdown:            redcarpet
+redcarpet:
+  extensions:        ["no_intra_emphasis", "fenced_code_blocks", "autolink", "strikethrough", "superscript", "footnotes", "tables", "with_toc_data"]
+
+excerpt_separator:    <excerpt/>
+permalink:            pretty

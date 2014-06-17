@@ -1,8 +1,11 @@
 ---
 layout: post
 title:  "Initialization best practices"
+date: 2014-03-18
 ---
+
 Recently I read a very interesting article by Twitter's Jake Jennings [How To: Objective C Initializer Patterns](https://blog.twitter.com/2014/how-to-objective-c-initializer-patterns). It got me into thinking and led me to the Apple's documentation on [objects allocation](https://developer.apple.com/library/ios/documentation/general/conceptual/CocoaEncyclopedia/ObjectAllocation/ObjectAllocation.html#//apple_ref/doc/uid/TP40010810-CH7-SW1) and [objects initialization](https://developer.apple.com/library/ios/documentation/general/conceptual/CocoaEncyclopedia/Initialization/Initialization.html#//apple_ref/doc/uid/TP40010810-CH6-SW1).
+<excerpt/>
 
 Turns out, I forgot very important concepts of the two step initialization: why do we write `[[MyClass alloc] init]` in one statement. I got this question on one of the interviews in the past.
 

@@ -4,6 +4,7 @@ title: "State restoration: beyond iOS"
 date: 2014-04-13
 ---
 Just a brief thought on [Preservation & Restoration API](https://developer.apple.com/library/ios/documentation/iphone/conceptual/iphoneosprogrammingguide/StatePreservation/StatePreservation.html). It occurred to me that extending this technology to Mac OS might give us much more seamless experience when switching between apps on Mac OS and iOS apps.
+<excerpt/>
 
 Possible applications are:
 
@@ -13,3 +14,5 @@ Possible applications are:
 * Stepping into the game you started in the bus on your phone and now want to enjoy on your desktop.
 
 There is a partial solution provided by iCloud, but it requires time to sync. The major difference of this approach is you are giving an explicit cue to the app through the UI: move my state now to a particular client (ocontrary to the continues syncing that iCloud does). Obviously it implies your interface and data being highly decoupled. Obviously it requires finding a common denominator between two platforms functionalities.
+
+**Update** One of those cases when Apple [introduced API](https://developer.apple.com/library/prerelease/ios/documentation/UserExperience/Conceptual/Handoff/Introduction/Introduction.html) serving the same purpose but implemented with Bluetooth LTE
