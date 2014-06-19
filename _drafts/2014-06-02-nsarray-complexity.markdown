@@ -11,14 +11,14 @@ Most of the time we take system classes for granted. Methods we call every day i
 
 Creation of the array is bound by the number of elements you want to initialize it with. Sadly, it's not possible to reference passed `void ** elements`. If you recall basics of Cocoa collections, most of them retain added elements by default. If you drop down to the level of Core Foundation, you can even specify your own callback functions to process all elements prior to insertion and removal[^array-callbacks-structure].  Finally, whether `retain` callback of `CFArrayCallBacks` structure set or not, `CFArrayRef` puts each element into its own bucket, allowing quick, predictable access by means of pointer math.
 
-| Method | Big&nbsp;_O_ | Description |
-| :- | :-: | :- |
+| Method | Big&nbsp;*O* | Description |
+| --- | --- | --- |
 | `initWithArray:` | _O(n)_ | calls [_`initWithArray:range:copyItems:`_](#initwitharrayrangecopyitems)[^method-legend], copies items |
-| `initWithArray:copyItems:` | _O(n)_ | calls [_`initWithArray:range:copyItems:`_](#initwitharrayrangecopyitems) |
+| `initWithArray:copyItems:` | _O(n)_ | calls [*`initWithArray:range:copyItems:`*](#initwitharrayrangecopyitems) |
 | `initWithObjects:` | _O(n)_ | calls [`initWithObjects:count:`](#initwithobjectscount) |
-| `initWithObjects:count:` | _O(n)_ | where _n_ is a number of objects, sets indexed ivars, calls [_`__new:::`_](#new) |
-| _`initWithArray:range:copyItems:`_ | _O(n)_ | calls [`initWithObjects:count:`](#initwithobjectscount) |
-| _`__new:::`_ | _O(n)_ | where _n_ is a number of passed objects, enumerated using `do {} while` loop |
+| `initWithObjects:count:` | _O(n)_ | where _n_ is a number of objects, sets indexed ivars, calls [*`__new:::`*](#new) |
+| *`initWithArray:range:copyItems:`* | _O(n)_ | calls [`initWithObjects:count:`](#initwithobjectscount) |
+| *`__new:::`* | _O(n)_ | where _n_ is a number of passed objects, enumerated using `do {} while` loop |
 
 # Querying an Array
 
