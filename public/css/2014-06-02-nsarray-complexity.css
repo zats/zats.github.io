@@ -1,0 +1,7 @@
+code {
+    word-break: break-word;
+}
+
+td:first-child {
+    min-width: 250px;
+}
