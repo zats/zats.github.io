@@ -13,7 +13,7 @@ attempt to clarify running complexity of the most common `NSArray` methods. I us
 
 Creation of the array is bound by the number of elements you want to initialize it with. Sadly, it's not possible to reference passed `void ** elements`. If you recall basics of Cocoa collections, most of them retain added elements by default. If you drop down to the level of Core Foundation, you can even specify your own callback functions to process all elements prior to insertion and removal[^array-callbacks-structure].  Finally, whether `retain` callback of `CFArrayCallBacks` structure set or not, `CFArrayRef` puts each element into its own bucket, allowing quick, predictable access by means of pointer math.
 
-![init methods diagram](/assets/2014-06-02/init.svg)
+![init methods diagram](/assets/2014-06-02/initialization.svg)
 
 
 | Method | Big&nbsp;*O* | Description |
@@ -29,7 +29,17 @@ Creation of the array is bound by the number of elements you want to initialize 
 
 This is a strong suit of arrays, most of the methods require _O(1)_ time. At first, it seems like array containing random data types can not retrieve _n_-th element without iterating over all preceding ones, querying size of each one of them. Core Foundation solves this issue by wrapping each element in a bucket, e.g. `CFArrayRef` keeps a pointer to the first `__CFArrayBucket`, so `objectAtIndex:` effectively becomes `__CFArrayGetBucketAtIndex(array, index) -> actualData`.
 
-The only exception is `containsObject:` group of methods, assuming we have no additional knowledge about the array internals, we have to iterate over all elements to probe for equality.
+The only exception is `containsObject:` group of methods, assuming we have no additional knowledge about the array internals, we have to iterate over all elements to probe for equality. By the way, if you know that objects you store have slow `isEqual:`, you can implement your own a slightly faster
+
+```objective-c
+- (BOOL)containsObjectIdenticalTo:(id)object {
+  return [self indexOfObjectIdenticalTo:object] != NSNotFound;
+}
+```
+
+It's stil _O(n)_, but uses equality by pointer instead of by value.
+
+![init methods diagram](/assets/2014-06-02/querying.svg)
 
 | Method name | Big&nbsp;_O_ | Description |
 | --- | --- | --- |
