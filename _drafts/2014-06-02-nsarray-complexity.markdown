@@ -13,6 +13,9 @@ attempt to clarify running complexity of the most common `NSArray` methods. I us
 
 Creation of the array is bound by the number of elements you want to initialize it with. Sadly, it's not possible to reference passed `void ** elements`. If you recall basics of Cocoa collections, most of them retain added elements by default. If you drop down to the level of Core Foundation, you can even specify your own callback functions to process all elements prior to insertion and removal[^array-callbacks-structure].  Finally, whether `retain` callback of `CFArrayCallBacks` structure set or not, `CFArrayRef` puts each element into its own bucket, allowing quick, predictable access by means of pointer math.
 
+![init methods diagram](/assets/2014-06-02/init.svg)
+
+
 | Method | Big&nbsp;*O* | Description |
 | --- | --- | --- |
 | `initWithArray:` | _O(n)_ | calls _`initWithArray:range:copyItems:`_[^method-legend], copies items |
@@ -88,9 +91,7 @@ Almost all array sort methods rely on Core Foundation's `CFMergeSortArray`, that
 | `sortedArrayUsingFunction:context:` | _O(n&nbsp;log&nbsp;n)_ | wraps a function call into `sortedArrayWithOptions:usingComparator:` |
 | `sortedArrayUsingFunction:context:hint:` | _O(P&nbsp;log&nbsp;P&nbsp;+&nbsp;n)_ | _P_ is a number of changes since `sortedArraHint` was called on sorted array and _n_ is a number of elements in the receiver. This is a very interesting method. I suggest reading [Apple's documentation](https://developer.apple.com/library/ios/documentation/cocoa/reference/foundation/classes/NSArray_Class/NSArray.html#//apple_ref/doc/uid/20000137-DontLinkElementID_73). In short, if you had a sorted array of _n_ elements and performed _P_ operations (insert, delete, swap) on it, where _P_ is much less than _n_, this method should work much faster than `sortedArrayUsingFunction:context:`. Sadly, all my tests failed to demonstrate performance benefit described above. When testing Apple's [sample code](https://developer.apple.com/library/mac/Documentation/Cocoa/Conceptual/Collections/Articles/Arrays.html#//apple_ref/doc/uid/20000132-SW8) regular `sortedArrayUsingFunction:context:` seems to be faster than its hinted version. Besides, the problem domain seems close to insertion sort that might be more effective in this case, also you might want to use `indexOfObject:inSortedRange:options:usingComparator:` with `NSBinarySearchingInsertionIndex` option to find suggested index to insert the new element |
 | `sortedArrayUsingDescriptors:` | _O(n&nbsp;log&nbsp;n)_ | calls `CFMergeSortArray` |
-| `sortedArrayUsingSelector:` | _O(n&nbsp;log&nbsp;n)_ | calls `sortedArrayWithOptions:usingComparator:` |
-| `sortedArrayUsingComparator:` | _O(n&nbsp;log&nbsp;n)_ | calls _`sortedArrayFromRange:options:usingComparator:`_ |
-| `sortedArrayWithOptions:usingComparator:` | _O(n&nbsp;log&nbsp;n)_ | calls _`sortedArrayFromRange:options:usingComparator:`_ |
+| `sortedArrayUsingSelector:`<br/>`sortedArrayUsingComparator:`<br/>`sortedArrayWithOptions:usingComparator:` | _O(n&nbsp;log&nbsp;n)_ | calls _`sortedArrayFromRange:options:usingComparator:`_ |
 | _`sortedArrayFromRange:options:usingComparator:`_ | _O(n&nbsp;log&nbsp;n)_ | calls `_CFSortIndexes` with elements from specified `range`, effectively performing merge sort |
 
 [^find-index-of-element]: Assuming we do not have any additional information about the array. For sorted array use `indexOfObject:inSortedRange:options:usingComparator:`.
