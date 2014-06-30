@@ -55,6 +55,8 @@ It's stil _O(n)_, but uses equality by pointer instead of by value.
 
 Just like with `containsObject:`, when it comes to finding indexes for given objects, complexity increases up to _O(n)_[^find-index-of-element].
 
+![init methods diagram](/assets/2014-06-02/finding-objects.svg)
+
 | Method name | Big&nbsp;_O_ | Description |
 | --- | --- | --- |
 | `indexOfObject:`  | _O(n)_ | _n_ is a number of elements in the receiver array, iterated using `do {} while` loop |
