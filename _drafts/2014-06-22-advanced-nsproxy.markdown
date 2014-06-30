@@ -4,43 +4,31 @@ title: "Advanced NSProxy"
 date: 2014-06-22
 ---
 
-Every now and then, [we use](https://github.com/search?q=nsproxy&ref=opensearch) `NSProxy` to inject additional logic into existent classes without affecting it internals. But what if we need a more fine-grained control over the flow of the original method.
-<excerpt/>
-
----
-
-**TL;DR** version can be found in [this gist](https://gist.github.com/zats/c74f38fd5658970d5060)
-
----
-
-Normally, your `NSProxy` flow would look something like this:
+Imagine your `Dog` class has a following method:
 
 ```objective-c
-@implementation Spaceship
-
-- (void)takeoff {
-    if ([self hasEnoughFuel]) {
-        [self bucklePilotIn];
-    }
+- (void)greetIfAwake {
+  if ([self isAwake]) {
+    [self bark];
+    [self jump];
+  }
 }
-
-@end
-
-@interface HyperspaceAwareSpaceship : NSProxy
-@end
-
-@implementation HyperspaceAwareSpaceship
-
-- (void)takeoff {
-    if ([Hyperspace isAvailable]) {
-        [self.spaceship takeoff];
-    }
-}
-
-@end
 ```
 
-Once original `takeoff` method is called, our `HyperspaceAwareSpaceship` will never be called for `hasEnoughFuel` or `bucklePilotIn`. How to convince original object to callback to proxy for each method performed on `self`?
+Now imagine a mischievous `Cat` (a subclass of `NSProxy` obviously) wishing to get in a way…
+<excerpt/>
+
+Normally your flow would looks like this:
+
+![regular NSProxy flow](/assets/nsproxy-flow/regular-nsproxy-flow.svg)
+
+But what if we want to alter it to be more like this:
+
+![advanced NSProxy flow](/assets/nsproxy-flow/advanced-nsproxy-flow.svg)
+
+e.g. every time method on `self` would be invoked we want our proxy to be consulted prior to execution.
+
+**TL;DR** version can be found in [this gist](https://gist.github.com/zats/c74f38fd5658970d5060)
 
 # Spoofing `self`
 
