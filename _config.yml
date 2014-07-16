@@ -16,7 +16,7 @@ paginate:             5
 
 markdown:            redcarpet
 redcarpet:
-  extensions:        ["no_intra_emphasis", "fenced_code_blocks", "autolink", "strikethrough", "superscript", "footnotes", "tables", "with_toc_data"]
+  extensions:        ["no_intra_emphasis", "fenced_code_blocks", "autolink", "strikethrough", "footnotes", "tables", "with_toc_data"]
 
 excerpt_separator:    <excerpt/>
 permalink:            pretty
