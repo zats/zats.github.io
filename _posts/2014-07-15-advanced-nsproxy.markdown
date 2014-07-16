@@ -122,11 +122,11 @@ First one is to use function called when you register first KVO observer on an i
 
 ```objective-c
 static inline Class DynamicProxyClassForClass(Class objectClass) {
-    Class baseClass = [DynamicProxy class];
-    NSString *newClassName = [NSString stringWithFormat:@"%@_%@", objectClass, baseClass];
-    Class dynamicProxyClass = objc_duplicateClass(objectClass, [newClassName UTF8String], 0);
-    class_setSuperclass(dynamicProxyClass, baseClass);
-    return dynamicProxyClass;
+  Class baseClass = [DynamicProxy class];
+  NSString *newClassName = [NSString stringWithFormat:@"%@_%@", objectClass, baseClass];
+  Class dynamicProxyClass = objc_duplicateClass(objectClass, [newClassName UTF8String], 0);
+  class_setSuperclass(dynamicProxyClass, baseClass);
+  return dynamicProxyClass;
 }
 ```
 
@@ -138,14 +138,14 @@ Creating a new subclass from scratch, at runtime:
 
 ```objective-c
 static inline Class DynamicProxyClassForClass(Class objectClass) {
-    Class baseClass = [DynamicProxy class];
-    NSString *newClassName = [NSString stringWithFormat:@"%@_%@", objectClass, baseClass];
-    Class dynamicProxyClass = objc_allocateClassPair(baseClass, [newClassName UTF8String], 0);
-    class_setIvarLayout(dynamicProxyClass, class_getIvarLayout(objectClass));
-    class_setWeakIvarLayout(dynamicProxyClass, class_getWeakIvarLayout(objectClass));
-    CopyAllIvars(objectClass, dynamicProxyClass);
-    objc_registerClassPair(dynamicProxyClass);
-    return dynamicProxyClass;
+  Class baseClass = [DynamicProxy class];
+  NSString *newClassName = [NSString stringWithFormat:@"%@_%@", objectClass, baseClass];
+  Class dynamicProxyClass = objc_allocateClassPair(baseClass, [newClassName UTF8String], 0);
+  class_setIvarLayout(dynamicProxyClass, class_getIvarLayout(objectClass));
+  class_setWeakIvarLayout(dynamicProxyClass, class_getWeakIvarLayout(objectClass));
+  CopyAllIvars(objectClass, dynamicProxyClass);
+  objc_registerClassPair(dynamicProxyClass);
+  return dynamicProxyClass;
 }
 ```
 
@@ -157,9 +157,9 @@ The only thing that left to do is to copy all the ivar values from original clas
 
 ```objective-c
 static inline void SetIvar(id destination, Ivar ivar, void *originalValue) {
-    ptrdiff_t ivarOffset = ivar_getOffset(ivar);
-    void **ivarPosition = ((__bridge void*)destination + ivarOffset);
-    *ivarPosition = originalValue;
+  ptrdiff_t ivarOffset = ivar_getOffset(ivar);
+  void **ivarPosition = ((__bridge void*)destination + ivarOffset);
+  *ivarPosition = originalValue;
 }
 ```
 
@@ -171,11 +171,11 @@ I tried several approaches to make ivars in `DynamicProxy` play nicely with our 
 
 ```objective-c
 - (void)setZts_object:(id)zts_object {
-    objc_setAssociatedObject(self, @selector(zts_object), zts_object, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+  objc_setAssociatedObject(self, @selector(zts_object), zts_object, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (id)zts_object {
-    return objc_getAssociatedObject(self, @selector(zts_object));
+  return objc_getAssociatedObject(self, @selector(zts_object));
 }
 ```
 
