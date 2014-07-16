@@ -32,7 +32,7 @@ e.g. every time method on `self` is invoked, we want our proxy to be consulted p
 
 # Spoofing `self`
 
-First, let's replace `self` within the scope of the original method. As you know, `self` is nothing more than a convention: it's a regular reference passed to each method as a first implicit argument[^self-argument] (so it doesn't affect user-defined arguments). Normally, replacing an argument would be as easy as calling `[invocation setArgument:&argument atIndex:index];`, but, as I mentioned, `self` is a special one. If we follow a regular `forwardInvocation:` pattern, `invocation.target` is used to find receiver for `invocation.selector` and becomes `self` within the scope of the implementation.
+First, let's replace `self` within the scope of the original method. As you know, `self` is nothing more than a convention: it's a regular reference passed to each method as a first implicit argument (so it doesn't affect user-defined arguments). Normally, replacing an argument would be as easy as calling `[invocation setArgument:&argument atIndex:index];`, but, as I mentioned, `self` is a special one. If we follow a regular `forwardInvocation:` pattern, `invocation.target` is used to find receiver for `invocation.selector` and becomes `self` within the scope of the implementation.
 
 ```objective-c
 - (void)forwardInvocation:(NSInvocation *)invocation {
@@ -62,6 +62,7 @@ Obviously, I want my code to run both on simulator and on a real device. For tha
 @interface NSInvocation ()
 
 - (void)invokeUsingIMP:(IMP)implementation;
+
 @end
 
 @implementation Cat
@@ -97,9 +98,9 @@ Our proxy code is going to crash due to ivar access. Here is autosynthesized imp
 }
 ```
 
-which is what compiler turns your `_playingDead` ivar access statements[^ivar-access-statements] into.
+which is what compiler turns your `_playingDead` ivar access statements into. You might remember it from accessing ivars from within certain blocks, when compiler warns you that `self->_ivar` might create a retain cycle.
 
-Now let's step aside for a second, how did we get here? What does the `->` operator have to do with our objective oriented world? All the classes in objective-c are pointers to structures[^objc_class] and ivars are nothing more than additional fields in the struct. And since Objective C is a strict superset of C, nothing stops us from accessing those fields directly just like this:
+Now let's step aside for a second, how did we get here? What does the `->` operator have to do with our objective oriented world? All the classes in objective-c are pointers to structures, since `Class` is a merely `typedef struct objc_class *Class;`, we're basically operating on struct pointers. Ivars are nothing more than additional fields in the struct. And since Objective C is a strict superset of C, nothing stops us from accessing those fields directly just like this:
 
 ```objective-c
 CGRect rect = CGSizeMake(3, 14, 15, 92);
@@ -183,8 +184,3 @@ You really should prefix your properties with whatever `xyz` you prefer, since y
 # Afterword
 
 Although it seems like a highly theoretical excursive, this technic might be a useful for partial mocking or just for cases when you want to proxy all calls to a particular instance of a class, not just the initial one performed on the proxy directly. Although, I have to acknowledge, this code most likely does not belong to your App Store branch, it is still highly useful for unit tests and debugging purposes.
-
-[^import-runtime]: Use your best judgment to include this kind of code into your production builds!
-[^self-argument]: Second implicit parameter is `_cmd` being a selector that is executing, then all your arguments.
-[^ivar-access-statements]: You probably remember it from accessing ivars from within certain blocks, when compiler warns you that `self->_ivar` might create a retain cycle.
-[^objc_class]: Since `Class` is a merely `typedef struct objc_class *Class;`, we're basically operating on struct pointers.
