@@ -62,10 +62,9 @@ Obviously, I want my code to run both on simulator and on a real device. For tha
 @interface NSInvocation ()
 
 - (void)invokeUsingIMP:(IMP)implementation;
-
 @end
 
-@implementation HyperspaceAwareSpaceship
+@implementation Cat
 
 - (void)forwardInvocation:(NSInvocation *)invocation {
   Method method = class_getInstanceMethod(object_getClass(self.originalObject), invocation.selector);
