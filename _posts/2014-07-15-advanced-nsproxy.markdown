@@ -186,5 +186,5 @@ Although it seems like a highly theoretical excursive, this technic might be a u
 
 [^import-runtime]: Use your best judgment to include this kind of code into your production builds!
 [^self-argument]: Second implicit parameter is `_cmd` being a selector that is executing, then all your arguments.
-[^ivar-access-statements]: You probably remember it from accessing ivars from within certain blocks, when compiler warns you that `self->_ivar` might create a     retain cycle.
+[^ivar-access-statements]: You probably remember it from accessing ivars from within certain blocks, when compiler warns you that `self->_ivar` might create a retain cycle.
 [^objc_class]: Since `Class` is a merely `typedef struct objc_class *Class;`, we're basically operating on struct pointers.
