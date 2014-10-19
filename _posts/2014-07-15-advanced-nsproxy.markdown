@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Advanced NSProxy"
-date: 2014-06-22
+date: 2014-07-15
 ---
 
 Imagine your `Dog` class has a following method:
@@ -26,17 +26,17 @@ But what if we want to alter it to be more like this:
 
 ![advanced NSProxy flow](/assets/nsproxy-flow/advanced-nsproxy-flow.svg)
 
-e.g. every time method on `self` would be invoked we want our proxy to be consulted prior to execution.
+e.g. every time method on `self` is invoked, we want our proxy to be consulted prior to execution.
 
 **TL;DR** version can be found in [this gist](https://gist.github.com/zats/c74f38fd5658970d5060)
 
 # Spoofing `self`
 
-First, let's replace `self` within the scope of the original method. As you know, `self` is nothing more than a convention: it's a regular reference passed to each method as a first implicit argument[^self-argument] (so it doesn't affect user-defined arguments). Normally, replacing an argument would be as easy as calling `[invocation setArgument:&argument atIndex:index];`, but, as I mentioned, `self` is a special one. If we follow a regular `forwardInvocation:` pattern, `invocation.target` is used to find receiver for `invocation.selector` and becomes `self` within the scope of the implementation.
+First, let's replace `self` within the scope of the original method. As you know, `self` is nothing more than a convention: it's a regular reference passed to each method as a first implicit argument (so it doesn't affect user-defined arguments). Normally, replacing an argument would be as easy as calling `[invocation setArgument:&argument atIndex:index];`, but, as I mentioned, `self` is a special one. If we follow a regular `forwardInvocation:` pattern, `invocation.target` is used to find receiver for `invocation.selector` and becomes `self` within the scope of the implementation.
 
 ```objective-c
 - (void)forwardInvocation:(NSInvocation *)invocation {
-    [invocation invokeWithTarget:self.originalObject];
+  [invocation invokeWithTarget:self.originalObject];
 }
 ```
 
@@ -44,11 +44,11 @@ First, let's replace `self` within the scope of the original method. As you know
 
 [Documentation](https://developer.apple.com/library/ios/documentation/Cocoa/Reference/Foundation/Classes/NSObject_Class/Reference/Reference.html#//apple_ref/occ/instm/NSObject/forwardInvocation:) is not clear on the topic of calling `forwardInvocation:` directly on `NSObject` subclasses.
 
-Objective C [runtime code](http://www.opensource.apple.com/source/objc4/objc4-551.1/runtime/NSObject.mm) states that `- [NSObject forwardInvocation:]` simply calls `doesNotRecognizeSelector:` however, iOS Simulator version of libobjc.dylib actually calls the original selector if it's found instead. Therefore
+Objective C [runtime code](http://www.opensource.apple.com/source/objc4/objc4-551.1/runtime/NSObject.mm) states that `- [NSObject forwardInvocation:]` simply calls `doesNotRecognizeSelector:` however, iOS Simulator version of `libobjc.dylib` actually calls the original selector if it's found instead. Therefore
 
 ```objective-c
 - (void)forwardInvocation:(NSInvocation *)invocation {
-    [self.originalObject forwardInvocation:invocation];
+  [self.originalObject forwardInvocation:invocation];
 }
 ```
 
@@ -65,12 +65,12 @@ Obviously, I want my code to run both on simulator and on a real device. For tha
 
 @end
 
-@implementation HyperspaceAwareSpaceship
+@implementation Cat
 
 - (void)forwardInvocation:(NSInvocation *)invocation {
-   Method method = class_getInstanceMethod(object_getClass(self.originalObject), invocation.selector);
-   IMP implementation = method_getImplementation(method);
-   [invocation invokeUsingIMP:implementation];
+  Method method = class_getInstanceMethod(object_getClass(self.originalObject), invocation.selector);
+  IMP implementation = method_getImplementation(method);
+  [invocation invokeUsingIMP:implementation];
 }
 
 @end
@@ -78,29 +78,29 @@ Obviously, I want my code to run both on simulator and on a real device. For tha
 
 Here we have a bit more explicit story: invocation was clearly designated for our `NSProxy` subclass but instead of `invokeWithTarget:` that figures out implementation of specified `selector` for you, we take over and supplying implementation we believe is right. Besides, this approach works both with simulator and devices.
 
-The downside is the usage of a private API. So, once again, this is definitely not an App Store-ready code. However, at this point we can spoof `self` on and method.
+The downside is the usage of a private API. So, once again, this is definitely not an App Store-friendly code. However, at this point we can spoof `self` on any method.
 
 # Ivars
 
 Another challenge when spoofing `self` lies in synthesized properties. Consider following implementation of `hasEnoughFuel` from our initial example:
 
 ```objective-c
-- (BOOL)hasEnoughFuel {
-    return self.fuelLevel < kProximaCentauriDistance * kLitterPerParsec;
+- (BOOL)isAwake {
+  return !self.isAsleep || self.isPlayingDead;
 }
 ```
 
-Our proxy code is going to crash. This is due to ivar access. Here is autosynthesized implementation of `fuelLevel` getter:
+Our proxy code is going to crash due to ivar access. Here is autosynthesized implementation of `isPlayingDead` getter:
 
 ```objective-c
-- (NSUInteger)fuelLevel {
-    return self->_fuelLevel;
+- (BOOL)isPlayingDead {
+  return self->_playingDead;
 }
 ```
 
-which is what compiler turns your `_fuelLevel` ivar access statements[^ivar-access-statements] into.
+which is what compiler turns your `_playingDead` ivar access statements into. You might remember it from accessing ivars from within certain blocks, when compiler warns you that `self->_ivar` might create a retain cycle.
 
-Now let's step aside for a second, how did we get here? What does the `->` operator have to do with our objective oriented world? All the classes in objective-c are pointers to structures[^objc_class] and ivars are nothing more than additional fields in the struct. And since Objective C is a strict superset of C, nothing stops us from accessing those fields directly just like this:
+Now let's step aside for a second, how did we get here? What does the `->` operator have to do with our objective oriented world? All the classes in objective-c are pointers to structures, since `Class` is a merely `typedef struct objc_class *Class;`, we're basically operating on struct pointers. Ivars are nothing more than additional fields in the struct. And since Objective C is a strict superset of C, nothing stops us from accessing those fields directly just like this:
 
 ```objective-c
 CGRect rect = CGSizeMake(3, 14, 15, 92);
@@ -122,11 +122,11 @@ First one is to use function called when you register first KVO observer on an i
 
 ```objective-c
 static inline Class DynamicProxyClassForClass(Class objectClass) {
-    Class baseClass = [DynamicProxy class];
-    NSString *newClassName = [NSString stringWithFormat:@"%@_%@", objectClass, baseClass];
-    Class dynamicProxyClass = objc_duplicateClass(objectClass, [newClassName UTF8String], 0);
-    class_setSuperclass(dynamicProxyClass, baseClass);
-    return dynamicProxyClass;
+  Class baseClass = [DynamicProxy class];
+  NSString *newClassName = [NSString stringWithFormat:@"%@_%@", objectClass, baseClass];
+  Class dynamicProxyClass = objc_duplicateClass(objectClass, [newClassName UTF8String], 0);
+  class_setSuperclass(dynamicProxyClass, baseClass);
+  return dynamicProxyClass;
 }
 ```
 
@@ -138,14 +138,14 @@ Creating a new subclass from scratch, at runtime:
 
 ```objective-c
 static inline Class DynamicProxyClassForClass(Class objectClass) {
-    Class baseClass = [DynamicProxy class];
-    NSString *newClassName = [NSString stringWithFormat:@"%@_%@", objectClass, baseClass];
-    Class dynamicProxyClass = objc_allocateClassPair(baseClass, [newClassName UTF8String], 0);
-    class_setIvarLayout(dynamicProxyClass, class_getIvarLayout(objectClass));
-    class_setWeakIvarLayout(dynamicProxyClass, class_getWeakIvarLayout(objectClass));
-    CopyAllIvars(objectClass, dynamicProxyClass);
-    objc_registerClassPair(dynamicProxyClass);
-    return dynamicProxyClass;
+  Class baseClass = [DynamicProxy class];
+  NSString *newClassName = [NSString stringWithFormat:@"%@_%@", objectClass, baseClass];
+  Class dynamicProxyClass = objc_allocateClassPair(baseClass, [newClassName UTF8String], 0);
+  class_setIvarLayout(dynamicProxyClass, class_getIvarLayout(objectClass));
+  class_setWeakIvarLayout(dynamicProxyClass, class_getWeakIvarLayout(objectClass));
+  CopyAllIvars(objectClass, dynamicProxyClass);
+  objc_registerClassPair(dynamicProxyClass);
+  return dynamicProxyClass;
 }
 ```
 
@@ -157,9 +157,9 @@ The only thing that left to do is to copy all the ivar values from original clas
 
 ```objective-c
 static inline void SetIvar(id destination, Ivar ivar, void *originalValue) {
-    ptrdiff_t ivarOffset = ivar_getOffset(ivar);
-    void **ivarPosition = ((__bridge void*)destination + ivarOffset);
-    *ivarPosition = originalValue;
+  ptrdiff_t ivarOffset = ivar_getOffset(ivar);
+  void **ivarPosition = ((__bridge void*)destination + ivarOffset);
+  *ivarPosition = originalValue;
 }
 ```
 
@@ -171,21 +171,16 @@ I tried several approaches to make ivars in `DynamicProxy` play nicely with our 
 
 ```objective-c
 - (void)setZts_object:(id)zts_object {
-    objc_setAssociatedObject(self, @selector(zts_object), zts_object, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+  objc_setAssociatedObject(self, @selector(zts_object), zts_object, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (id)zts_object {
-    return objc_getAssociatedObject(self, @selector(zts_object));
+  return objc_getAssociatedObject(self, @selector(zts_object));
 }
 ```
 
-You really should prefix your properties with whatever `xyz` you preffer, since you never know which class are you going to copy over.
+You really should prefix your properties with whatever `xyz` you prefer, since you never know which class are you going to copy over.
 
 # Afterword
 
-Although it seems like a highly theoretical excursive, this technic might be a useful for partial mocking or just for cases when you want to proxy all calls to a particular instance of a class, not just the initial one performed on the proxy directly. Although, I have to acknowledge, this code most likely does not belong to your App Store branch, it is still highly usefull for unit tests and debugging purposes.
-
-[^import-runtime]: Use your best judgment to include this kind of code into your production builds!
-[^self-argument]: Second implicit parameter is `_cmd` being a selector that is executing, then all your arguments.
-[^ivar-access-statements]: You probably remember it from accessing ivars from within certain blocks, when compiler warns you that `self->_ivar` might create a     retain cycle.
-[^objc_class]: Since `Class` is a merely `typedef struct objc_class *Class;`, we're basically operating on struct pointers.
+Although it seems like a highly theoretical excursive, this technic might be a useful for partial mocking or just for cases when you want to proxy all calls to a particular instance of a class, not just the initial one performed on the proxy directly. Although, I have to acknowledge, this code most likely does not belong to your App Store branch, it is still highly useful for unit tests and debugging purposes.

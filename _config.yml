@@ -1,5 +1,5 @@
 title:                Sash Zats
-tagline:              'The worst player in the band should be you'
+tagline:              ''
 description:          'A reserved <a href="http://jekyllrb.com" target="_blank">Jekyll</a> theme that places the utmost gravity on content with a hidden drawer. Made by <a href="https://twitter.com/mdo" target="_blank">@mdo</a>.'
 url:                  http://zats.io
 
@@ -16,7 +16,7 @@ paginate:             5
 
 markdown:            redcarpet
 redcarpet:
-  extensions:        ["no_intra_emphasis", "fenced_code_blocks", "autolink", "strikethrough", "superscript", "footnotes", "tables", "with_toc_data"]
+  extensions:        ["no_intra_emphasis", "fenced_code_blocks", "autolink", "strikethrough", "footnotes", "tables", "with_toc_data"]
 
 excerpt_separator:    <excerpt/>
 permalink:            pretty
