@@ -4,7 +4,7 @@ title: "Whose symbol is this?"
 date: "2014-10-25"
 ---
 
-Once in a while I found myself in need of finding who declared certain function or method. If you were wondering, here is how you can do it
+Once in a while I found myself in need of finding who declared certain function or method. With Apple added support for iOS frameworks, the need in being sure where particular piece of code is coming is somewhat high.
 
 ```objective-c
 #import <dlfcn.h>
