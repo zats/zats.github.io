@@ -75,7 +75,7 @@ Finally, much more rare case of getting a pointer to a block and tracing its ori
 
 ```objective-c
 void(^block)(NSUInteger) = ^(NSUInteger a){
-    NSLog(@"bool %tu", a);
+    NSLog(@"%tu", a);
 };
 
 Dl_info info;
