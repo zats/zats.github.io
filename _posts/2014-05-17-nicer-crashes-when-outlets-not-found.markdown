@@ -7,7 +7,6 @@ date: 2014-05-17
 > \[\<ZTSViewController 0x8c46c60> setValue:forUndefinedKey:]: this class is not key value coding-compliant for the key textField.
 
 We've probably seen similar exceptions when Interface Builder was involved in the process of app design. StackOverflow is [full of question](http://stackoverflow.com/search?q=setValue%3AforUndefinedKey%3A+this+class+is+not+key+value+coding-compliant+for+the+key) "what am I doing wrong?".
-<excerpt/>
 
 By now more advanced users probably guessed that I'm talking about UIKit trying to decode a storyboard (or a nib) and failing to find an appropriate outlet in the corresponding class. The way this technology works is not a trick: it uses KVC to establish connections. And, in cases I'm talking about, it fails to find an appropriate key. Most likely it's because someone renamed the control in the Interface Build and forgot to reflect the changes in code.
 

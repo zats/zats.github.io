@@ -5,7 +5,6 @@ date: "2014-07-02"
 ---
 
 As soon as you leave the cozy Xcode's build process, you find yourself fiddling with [`codesign`](https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man1/codesign.1.html) dealing with, well, code signing. There are many tools that suppose to ease up the process: [ota-tools](https://github.com/RichardBronosky/ota-tools), [shenzhen](https://github.com/nomad/shenzhen) and [gists](https://gist.github.com/mediabounds/1367348) to name a few. However, once in a while you find yourself in need of more flexible solution.
-<excerpt/>
 
 Our flow includes distributing betas from one Apple account and submitting to the App Store from another. This calls for:
 

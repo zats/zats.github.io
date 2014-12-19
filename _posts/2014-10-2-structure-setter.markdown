@@ -13,7 +13,6 @@ self.view.frame = frame;
 ```
 
 There is a better way!
-<excerpt/>
 
 First, let's start with a sligtly better way. If you don't want to polute your scope with temporary variables (let's say you have to change five different view's frames)
 

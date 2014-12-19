@@ -4,7 +4,6 @@ title: "State restoration: beyond iOS"
 date: 2014-04-13
 ---
 Just a brief thought on [Preservation & Restoration API](https://developer.apple.com/library/ios/documentation/iphone/conceptual/iphoneosprogrammingguide/StatePreservation/StatePreservation.html). It occurred to me that extending this technology to Mac OS might give us much more seamless experience when switching between apps on Mac OS and iOS apps.
-<excerpt/>
 
 Possible applications are:
 

@@ -16,7 +16,6 @@ Imagine your `Dog` class has a following method:
 ```
 
 Now imagine a mischievous `Cat` (a subclass of `NSProxy` obviously) wishing to get in a way…
-<excerpt/>
 
 Normally your flow would looks like this:
 

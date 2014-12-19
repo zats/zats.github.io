@@ -5,7 +5,6 @@ date: 2014-04-12
 ---
 
 Following code `[[NSDate date] dateByAddingTimeInterval:60 * 60]` is a really common attempt to get the current time in, let's say, France. Despite developer's expectations, it does not represent current time in GMT+1 time zone. So where is all the confusion coming from?
-<excerpt/>
 
 Let's execute `po [NSDate date]` in Xcode console. What are we seeing?
 

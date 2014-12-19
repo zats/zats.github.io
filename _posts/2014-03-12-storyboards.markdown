@@ -5,7 +5,6 @@ date: 2014-03-12
 ---
 
 I've seen people quoting this [Stack Overflow answer](http://stackoverflow.com/questions/9404471/when-to-use-storyboard-and-when-to-use-xibs/19457257#19457257) a lot when they need to convince someone not to use storyboards. I understand that it's a somewhat a flamewar topic, but I'd like to address the points author makes.
-<excerpt/>
 
 > Storyboards fail at runtime, not at compile time
 

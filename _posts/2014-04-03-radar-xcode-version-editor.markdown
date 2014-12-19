@@ -7,7 +7,6 @@ date: 2014-04-12
 Starting from Xcode 4, IDE comes with a version editor allowing (in theory) to browse commits, diffs, blames, logs etc
 
 Xcode 5.1 (at least) seems to find itself confused after pulling and jumping between branches several times.
-<excerpt/>
 
 As you can see, commit `edad969c…` is not the latest commit (even if we count only commits affecting current file).
 

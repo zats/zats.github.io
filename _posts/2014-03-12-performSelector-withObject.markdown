@@ -15,7 +15,6 @@ Recently, while going through the code review, I stumbled upon a curious bug tha
 ```
 
 This code didn't work on iOS 7.1 in 64 bit simulator. The workaround he offered was to declare a wrapper method `setSplashFinishedDisplayingWithNumber:` and use that with `performSelector:…`.
-<excerpt/>
 
 I didn't really like this approach for several reasons, and proposed to use `dispatch_after` instead. The major reason is it produces ARC-friendly analyzable code where `performSelector:` does not (also creating a proxy method feels kinda kind of dirty).
 
