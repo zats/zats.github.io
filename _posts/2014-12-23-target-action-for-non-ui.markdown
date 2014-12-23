@@ -4,7 +4,7 @@ title: "Target-action for non-ui components. You're probably doing it wrong."
 date: "2014-12-23"
 ---
 
-# TLDR
+# TL;DR
 
 Use `-[UIApplication sendAction:to:from:forEvent:]` instead of calling action on target directly if you want responder chain behaviour for free.
 
