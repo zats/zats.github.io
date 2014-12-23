@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Target-action for non-ui components. You're probably doing it wrong."
+title: "Target-action for non-ui components. There is an easier way!"
 date: "2014-12-23"
 ---
 
