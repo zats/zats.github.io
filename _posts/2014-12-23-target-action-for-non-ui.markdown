@@ -34,6 +34,8 @@ Several details worth mentioning here:
 
 Now, let's take a look at `UIControl` behaviour. You probably noticed how `-[UIControl addTarget:action:forControlEvents:]` accepts `nil` as a target parameter. What happens then is control, upon firing the event, will walk the responder chain starting from the `firstResponder` up to `UIWindow`, looking for someone who can handle specified `action`. This is what happening when you drag action to the first responder in your storyboard or nib files.
 
+# UIKit to the rescue!
+
 So how do we get this behaviour without traversing responder chain manually?[^1] Luckily, apple got us covered, and, this time, it's relatively straight forward. Let's modify our example above:
 
 ```objective-c
