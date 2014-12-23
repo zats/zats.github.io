@@ -55,6 +55,8 @@ As a bonus you can use one of following forms for action for free:
 
 UIKit takes care of passing the right parameters for you!
 
-In my example, I consider writing a non-ui feature, so I'm passing `nil` as the event. This technic allows a less-coupled design. However, you should be careful and try to avoid creating a mess of unidentified actions flying around a-la NSNotification-hell
+In my example, I consider writing a non-ui feature, so I'm passing `nil` as the event. However, you can create a custom subclass of `UIEvent` and pass required data with it. Modifying type of the event parameter to a subclass in the `- action:forEvent:` feels a bit dirty though.
+
+This technic allows a less-coupled design. However, you should be careful and try to avoid creating a mess of unidentified actions flying around a-la NSNotification-hell
 
 [^1]: which is, apparently, not that easy on iOS http://optshiftk.com/2014/08/implementing-uiapplication-targetforactiontofrom
