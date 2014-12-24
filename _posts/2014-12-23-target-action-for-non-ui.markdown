@@ -59,4 +59,6 @@ In my example, I consider writing a non-ui feature, so I'm passing `nil` as the 
 
 This technic allows a less-coupled design. However, you should be careful and try to avoid creating a mess of unidentified actions flying around a-la NSNotification-hell
 
+**Note** as it was mentioned, this technic is not a replacement for appropriate communication patterns such as delegation, notifications, blocks handlers etc. It's one of many tools that you might want to use but you should evaluate in the context of a particular task.
+
 [^1]: which is, apparently, not that easy on iOS http://optshiftk.com/2014/08/implementing-uiapplication-targetforactiontofrom
