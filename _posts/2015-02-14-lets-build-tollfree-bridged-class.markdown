@@ -6,6 +6,8 @@ tags: []
 published: True
 ---
 
+Source code for this blog post can be found at github: https://github.com/zats/TollFreeBridging
+
 ## Intro 
 
 You know technology is well executed when it disappears completely. [Toll-free bridging](http://developer.apple.com/library/ios/#documentation/CoreFoundation/Conceptual/CFDesignConcepts/Articles/tollFreeBridgedTypes.html) is a great example of "invisible" technology. You're using it extensively if you're wiring any Objective-C code probably without even knowing it. So what is toll-free bridging?
