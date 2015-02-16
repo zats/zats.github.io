@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Let's build a toll-free bridged class
+title: Let's build toll-free bridged class
 categories: []
 tags: []
 published: True
