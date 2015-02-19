@@ -13,7 +13,7 @@ published: True
 * Call `-[LeaksInstrument measure]` after each run.
 * Assert on `-[LeaksInstrument hasLeaksInRepresentativeSession]` being `NO`.
 
-[Source code](http://github.com)
+[Source code](https://github.com/zats/Generational-Analysis)
 
 # Intro
 
