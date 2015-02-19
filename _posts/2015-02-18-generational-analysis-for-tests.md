@@ -11,7 +11,7 @@ published: True
 * Execute a typical scenario, returning to the original state.
 * Repeat the scenario several (≥ 4) times. 
 * Call `-[LeaksInstrument measure]` after each run.
-* Assert on `-[LeaksInstrument hasLeaksInRepresentativeSession]` being `NO`.
+* Assert on `-[LeaksInstrument hasLeaksInRepresentativeSession]` being falsy.
 
 [Source code](https://github.com/zats/Generational-Analysis)
 
@@ -43,17 +43,7 @@ XCTAssertNil(obj);
 
 # Automate all the things!
 
-Some time ago I stumbled upon a brilliant library by [Richard Heard](http://rheard.com/blog/), called [Objective Beagle](https://github.com/heardrwt/RHObjectiveBeagle). It is a great tool for debugging. It searches all allocated instances, and finds those, matching specified class:
-
-```
-(lldb) po beagle(@"UISwitch")
-<__NSCFArray 0x8f2e6c0>(
-<UISwitch: 0x8f73aa0; frame = (93 226; 51 31); opaque = NO; autoresize = RM+BM; layer = <CALayer: 0x8f73bd0>>,
-<UISwitch: 0x8e6fa50; frame = (171 226; 51 31); opaque = NO; autoresize = RM+BM; layer = <CALayer: 0x8c6a760>>
-)
-```
-
-I figured that this is just what I needed. After slight refactoring, I had a running prototype, here is how to use it:
+Some time ago I stumbled upon a brilliant library by [Richard Heard](http://rheard.com/blog/), called [Objective Beagle](https://github.com/heardrwt/RHObjectiveBeagle). It is a great tool for debugging. It searches all allocated instances, and finds those, matching specified class. I figured that this is just what I needed. After slight refactoring, I had a running prototype, here is how to use it:
 
 ```objectivec
 - (void)testLeakingExample {
