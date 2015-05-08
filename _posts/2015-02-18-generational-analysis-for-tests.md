@@ -13,7 +13,7 @@ published: True
 * Call `-[LeaksInstrument measure]` after each run.
 * Assert on `-[LeaksInstrument hasLeaksInRepresentativeSession]` being falsy.
 
-[Source code](https://github.com/zats/Generational-Analysis)
+[Source code](https://github.com/NSFW-Objective-C/Generational-Analysis)
 
 # Intro
 
