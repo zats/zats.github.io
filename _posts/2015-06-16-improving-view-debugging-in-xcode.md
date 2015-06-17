@@ -15,7 +15,7 @@ Normally view debugging in Xcode is somewhat hard: it is hard to attribute bunch
 
 And the code that made it possible:
 
-{% gist zats/b4c7da22a076a751b279 %}
+{% gist zats/339380006894da2c4759 %}
 
 Obviously this code is guarded to run only in `DEBUG` mode.
 
