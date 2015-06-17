@@ -9,7 +9,7 @@ published: True
 
 Normally view debugging in Xcode is somewhat hard: each `UIViewController` by default comes with an instance of `UIView`, representing it in a view hierarchy. Here is a before and after:
 
-![](/assets/2015-06-16/view-debugging-xcode.png)
+![](/assets/2015-06-16/view-debugging-xcode.png =400x)
 
 And the code that made it possible:
 
