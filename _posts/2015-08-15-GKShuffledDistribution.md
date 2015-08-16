@@ -12,18 +12,16 @@ This exact behaviour is modelled by `GKShuffledDistribution`. To illustrate it, 
 
 {% gist zats/b8d9da7effd89b0e5400 %}
 
-and here is the output:
+Here is the output:
 
-```
-Random:
-3 1
-1 3
-2 2
+| Value | Random | Shuffled | Gausian |
+| :-- | :--: | :--: | :--: | 
+| 1 | 5 | 10 | 2 |
+| 2 | 14 | 10| 26 |
+| 3 | 11 | 10 | 2 | 
 
-Shuffled:
-3 2
-1 2
-2 2
-```
+And a visual version:
+
+![](/assets/2015-08-15/random.png)
 
 Although `GKRandomDistribution` instance produces equally distributed random numbers, it can result in so called "lucky strikes" - getting same value several times in a row. That's exactly when you want to use `GKShuffledDistribution`. Very nice addition.
