@@ -47,7 +47,7 @@ Even if property is declared as `readonly`, it is a good practise to use `copy`:
 
 # Methods
 
-## Arguments
+## Arguments might need to be copied internally
 
 ```objectivec
 - (void)applyParameters:(NSDictionary *)parameters {
@@ -57,7 +57,7 @@ Even if property is declared as `readonly`, it is a good practise to use `copy`:
 
 When working with parameters, depending on the implementation details of your method, you might want to copy arguments. Sadly, there is no syntactic sugar for it. In the example above, it is valid to pass a `NSMutableDictionary` which might be changed from a different thread or, if you keep the reference to `parameters` once you leave the method.
 
-## Return values
+## Return values might need to be copied before returning
 
 ```objectivec
 // Private proeprty declared in `.m`
