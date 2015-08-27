@@ -11,7 +11,7 @@ The question when to use `copy` vs `retain` is getting quite old, so I decided t
 
 # Properties
 
-## *Must* `copy` if type has a mutable subclass
+## Must `copy` if type has a mutable subclass
 
 ```objectivec
 @property (nonatomic, copy) NSArray *puppies;
@@ -25,7 +25,7 @@ or in Swift when using with Objective-C:
 
 If type of a property has a mutable counterpart, you *must* use `copy`, since you might get `NSMutable<Class>` instead of `NS<Class>` and the value might simply change underneath you without you knowing about it.
 
-## *Might* need `copy` if type conforms `NSCopying`
+## Might need `copy` if type conforms `NSCopying`
 
 If type of a property conforms to `NSCopying`, it's a sign that you *might* want to use `copy` but not necessarily. It would depend on implementation details of a particular class. Sadly, Cocoa doesn't have strict guidelines on how class should implement `NSCopying`. Keep in mind there is a `NSMutableCopying` protocol, if you want to underline the fact you have mutable and immutable flavors of your class, implement both protocols.
 
