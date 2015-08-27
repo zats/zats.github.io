@@ -1,13 +1,13 @@
 ---
 layout: post
-title: copy vs retain
+title: copy vs strong (retain)
 categories: []
 tags: []
 published: True
 
 ---
 
-The question when to use `copy` vs `retain` is getting quite old, so I decided to summarise rules I follow in one place. Mostly this is Objective-C-related post.
+The question when to use `copy` vs `strong` (ex `retain`) is getting quite old, so I decided to summarise rules I follow in one place. Mostly this is Objective-C-related post.
 
 # Properties
 
