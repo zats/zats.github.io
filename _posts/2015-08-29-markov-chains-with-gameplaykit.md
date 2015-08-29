@@ -12,7 +12,7 @@ Since Markov chains [can be represented](http://stackoverflow.com/questions/4880
 
 Basically, it is an autopilot combined with `GKStateMachine`. As a result, API for `MarkovChainMachine` is less hands on. All you need is to set its initial state and it will tell you which state should be next. Here is an example:
 
-```
+```swift
 let m = MarkovChainMachine(initialStates: [a, b], mapping: [
     [a, b]: [
         [0.3: a],
