@@ -160,6 +160,7 @@ pre code {
   padding: 0;
   color: inherit;
   background-color: transparent;
+  word-break: break-all;
 }
 .highlight {
   margin-bottom: 1rem;
