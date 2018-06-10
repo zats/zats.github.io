@@ -48,7 +48,11 @@ ul {
 
 a {
   color: {{ site.data.theme.highlight_color }};
-  text-decoration: none;
+}
+
+.content a {
+  text-decoration: underline;
+  color: rgb(29, 117, 255);
 }
 
 a:hover {
