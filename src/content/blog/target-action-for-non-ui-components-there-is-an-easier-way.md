@@ -1,0 +1,65 @@
+---
+title: "Target-action for non-ui components. There is an easier way!"
+description: "Use -[UIApplication sendAction:to:from:forEvent:] instead of calling action on target directly if you want responder chain behaviour for free."
+pubDate: 2014-12-23
+draft: false
+---
+
+# TL;DR
+
+Use `-[UIApplication sendAction:to:from:forEvent:]` instead of calling action on target directly if you want responder chain behaviour for free.
+
+# Typical target-action pattern
+
+Often enough, I found myself using this pattern to communicate between a non-ui objects. A simple case might look like this:
+
+```objective-c
+@interface Foo : NSObject
+@property (nonatomic, weak) id target;
+@property (nonatomic) SEL action;
+@end
+
+// somehwere in .m
+@implementation Foo
+- (void)bar {
+	[self.target performSelector:self.action];
+}
+@end
+```
+
+Several details worth mentioning here:
+
+* Your target **must** be weak, it's no different from delegate.
+* Calling selector on a target requires either silencing the compiler complaining (reasonably so) about ARC not knowing semantics of the call.
+* You can get away with using `NSInvocation` or other technics instead.
+
+Now, let's take a look at `UIControl` behaviour. You probably noticed how `-[UIControl addTarget:action:forControlEvents:]` accepts `nil` as a target parameter. What happens then is control, upon firing the event, will walk the responder chain starting from the `firstResponder` up to `UIWindow`, looking for someone who can handle specified `action`. This is what happening when you drag action to the first responder in your storyboard or nib files.
+
+# UIKit to the rescue!
+
+So how do we get this behaviour without traversing responder chain manually?[^1] Luckily, apple got us covered, and, this time, it's relatively straight forward. Let's modify our example above:
+
+```objective-c
+// somehwere in .m
+@implementation Foo
+- (void)bar {
+    [[UIApplication sharedApplication] sendAction:self.action to:self.target from:self forEvent:nil];
+}
+@end
+```
+
+As a bonus you can use one of following forms for action for free:
+
+* `- (void)action`
+* `- (void)action:(id)sender`
+* `- (void)action:(id)sender forEvent:(UIEvent *)event`
+
+UIKit takes care of passing the right parameters for you!
+
+In my example, I consider writing a non-ui feature, so I'm passing `nil` as the event. However, you can create a custom subclass of `UIEvent` and pass required data with it. Modifying type of the event parameter to a subclass in the `- action:forEvent:` feels a bit dirty though.
+
+This technic allows a less-coupled design. However, you should be careful and try to avoid creating a mess of unidentified actions flying around a-la NSNotification-hell
+
+**Note** as it was mentioned, this technic is not a replacement for appropriate communication patterns such as delegation, notifications, blocks handlers etc. It's one of many tools that you might want to use but you should evaluate in the context of a particular task.
+
+[^1]: which is, apparently, not that easy on iOS http://optshiftk.com/2014/08/implementing-uiapplication-targetforactiontofrom
