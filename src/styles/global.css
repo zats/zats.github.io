@@ -133,12 +133,22 @@ pre {
   line-height: 1.45em;
   margin: 1.5em 0;
   padding: 1em;
-  background-color: #24292e;
-  color: #e1e4e8;
+  background-color: #24292e !important;
+  color: #e1e4e8 !important;
   border-radius: 6px;
   overflow-x: auto;
   white-space: pre;
   word-wrap: normal;
+}
+
+/* Override any inline styles from syntax highlighters */
+pre[style] {
+  background-color: #24292e !important;
+  color: #e1e4e8 !important;
+}
+
+pre code, pre code span {
+  color: #e1e4e8 !important;
 }
 
 pre code {

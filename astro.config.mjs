@@ -11,8 +11,6 @@ export default defineConfig({
 		enabled: false
 	},
 	markdown: {
-		shikiConfig: {
-			theme: false,
-		},
+		syntaxHighlight: false,
 	},
 });
