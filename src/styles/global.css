@@ -128,14 +128,15 @@ code {
 }
 
 pre {
-  font-family: -apple-system-ui-monospaced, Menlo, Monaco, "SF Mono", Consolas, monospace;
+  font-family: -apple-system-ui-monospaced, Menlo;
   font-size: 0.87em;
   line-height: 1.45em;
   margin: 1.5em 0;
-  padding: 1em;
-  background-color: #24292e !important;
-  color: #e1e4e8 !important;
-  border-radius: 6px;
+  padding: 0;
+  background: transparent !important;
+  color: var(--text-color) !important;
+  border: none;
+  border-radius: 0;
   overflow-x: auto;
   white-space: pre;
   word-wrap: normal;
@@ -143,12 +144,13 @@ pre {
 
 /* Override any inline styles from syntax highlighters */
 pre[style] {
-  background-color: #24292e !important;
-  color: #e1e4e8 !important;
+  background: transparent !important;
+  color: var(--text-color) !important;
 }
 
 pre code, pre code span {
-  color: #e1e4e8 !important;
+  color: var(--text-color) !important;
+  background: transparent !important;
 }
 
 pre code {
