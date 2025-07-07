@@ -178,9 +178,7 @@ th {
 
 /* Horizontal Rules */
 hr {
-  border: none;
-  border-top: 1px solid var(--separator-color);
-  margin: 2em 0;
+  display: none;
 }
 
 /* Blog post metadata */
