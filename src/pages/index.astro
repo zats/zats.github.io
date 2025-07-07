@@ -1,10 +1,15 @@
 ---
-import Layout from '../layouts/BlogPost.astro';
+import BaseHead from '../components/BaseHead.astro';
 ---
 
-<Layout title="Redirecting...">
-  <script>
-    window.location.href = '/blog';
-  </script>
-  <p>Redirecting to blog...</p>
-</Layout>
+<html lang="en">
+  <head>
+    <BaseHead title="Redirecting..." description="Redirecting to blog" />
+    <script>
+      window.location.href = '/blog';
+    </script>
+  </head>
+  <body>
+    <p>Redirecting to blog...</p>
+  </body>
+</html>
