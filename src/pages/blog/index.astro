@@ -22,20 +22,27 @@ const posts = (await getCollection('blog')).sort(
 				padding: 0;
 			}
 			ul li {
-				margin-bottom: 2em;
-				padding-bottom: 2em;
-				border-bottom: 1px solid var(--separator-color);
-			}
-			ul li:last-child {
-				border-bottom: none;
+				margin-bottom: 3em;
 			}
 			ul li a {
-				display: block;
+				display: flex;
+				gap: 1.5em;
 				text-decoration: none;
 				color: var(--text-color);
+				align-items: flex-start;
 			}
 			ul li a:hover .title {
 				color: var(--link-color);
+			}
+			.post-content {
+				flex: 1;
+			}
+			.post-image {
+				flex-shrink: 0;
+				width: 120px;
+				height: 80px;
+				border-radius: 6px;
+				object-fit: cover;
 			}
 			.title {
 				margin: 0 0 0.3em 0;
@@ -67,11 +74,16 @@ const posts = (await getCollection('blog')).sort(
 						posts.map((post) => (
 							<li>
 								<a href={`/blog/${post.id}/`}>
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-									<p class="description">{post.data.description}</p>
+									<div class="post-content">
+										<h4 class="title">{post.data.title}</h4>
+										<p class="date">
+											<FormattedDate date={post.data.pubDate} />
+										</p>
+										<p class="description">{post.data.description}</p>
+									</div>
+									{post.data.heroImage && (
+										<Image width={120} height={80} src={post.data.heroImage} alt="" class="post-image" />
+									)}
 								</a>
 							</li>
 						))
