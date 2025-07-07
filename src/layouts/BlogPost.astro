@@ -2,6 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
+import SocialFooter from '../components/SocialFooter.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import { Image } from 'astro:assets';
 
@@ -75,5 +76,6 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				</div>
 			</article>
 		</main>
+		<SocialFooter />
 	</body>
 </html>
