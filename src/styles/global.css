@@ -132,8 +132,10 @@ pre {
   font-size: 0.87em;
   line-height: 1.45em;
   margin: 1.5em 0;
-  padding: 0;
-  background-color: transparent;
+  padding: 1em;
+  background-color: #24292e;
+  color: #e1e4e8;
+  border-radius: 6px;
   overflow-x: auto;
   white-space: pre;
   word-wrap: normal;
@@ -144,6 +146,7 @@ pre code {
   line-height: inherit;
   padding: 0;
   background-color: transparent;
+  color: inherit;
   white-space: pre-wrap;
   word-break: normal;
   overflow-wrap: normal;
