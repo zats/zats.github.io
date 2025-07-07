@@ -1,4 +1,10 @@
 ---
-// Redirect to blog
-return Astro.redirect('/blog', 301);
+import Layout from '../layouts/BlogPost.astro';
 ---
+
+<Layout title="Redirecting...">
+  <script>
+    window.location.href = '/blog';
+  </script>
+  <p>Redirecting to blog...</p>
+</Layout>
