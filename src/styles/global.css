@@ -118,48 +118,60 @@ li {
   margin-bottom: 0.5em;
 }
 
-/* Code */
+/* Inline code */
 code {
   font-family: -apple-system-ui-monospaced, Menlo, Monaco, "SF Mono", Consolas, monospace;
   font-size: 0.87em;
-  background-color: transparent;
-  padding: 0;
+  background-color: rgba(175, 184, 193, 0.2);
+  padding: 0.1em 0.4em;
+  border-radius: 0.3em;
   color: var(--text-color);
 }
 
+@media (prefers-color-scheme: dark) {
+  code {
+    background-color: rgba(110, 118, 129, 0.4);
+  }
+}
+
+/* Code blocks */
 pre {
   font-family: -apple-system-ui-monospaced, Menlo;
   font-size: 0.87em;
   line-height: 1.45em;
   margin: 1.5em 0;
-  padding: 0;
-  background: transparent !important;
-  color: var(--text-color) !important;
-  border: none;
-  border-radius: 0;
+  padding: 1em;
+  border-radius: 0.5em;
   overflow-x: auto;
   white-space: pre;
   word-wrap: normal;
+  background-color: #f8f9fa;
+  color: #24292e;
 }
 
-/* Override any inline styles from syntax highlighters */
-pre[style] {
-  background: transparent !important;
-  color: var(--text-color) !important;
+@media (prefers-color-scheme: dark) {
+  pre {
+    background-color: #0d1117;
+    color: #c9d1d9;
+  }
 }
 
-pre code, pre code span {
-  color: var(--text-color) !important;
-  background: transparent !important;
+/* Syntax highlighted code blocks */
+.astro-code {
+  padding: 1em;
+  overflow-x: auto;
+  margin: 1.5em 0;
 }
 
+/* Code inside pre blocks */
 pre code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  color: inherit;
   font-size: inherit;
   line-height: inherit;
-  padding: 0;
-  background-color: transparent;
-  color: inherit;
-  white-space: pre-wrap;
+  white-space: pre;
   word-break: normal;
   overflow-wrap: normal;
 }

@@ -66,7 +66,7 @@ This part is actually fairly straight forward, there's no API macOS offers to ke
 
 Amphetamine allows to prevent session if your battery level is getting low. This uses pretty much the same trick of sampling the battery level over certain time interval. Here is a sample of how to get it:
 
-```
+```objc
 import Foundation
 import IOKit.ps
 
