@@ -7,7 +7,10 @@ draft: false
 
 ![llllm logo](/assets/2025-07-08/brain_dev.png)
 
+<center><a href="httpsL//llllm.zats.io">llllm.zats.io</a></center>
+
 ## Introduction
+
 
 At WWDC 2025 Apple unveiled [Foundation](https://developer.apple.com/videos/play/wwdc2025/286/) [Models](https://developer.apple.com/videos/play/wwdc2025/301/), a [framework](https://developer.apple.com/documentation/foundationmodels) that lets third-party developers run the same on-device LLMs that power features like Notification summaries, Email categorization, and Writing tools. Everything happens locally, so latency is measured in milliseconds, and no personal data ever leaves the device. The trade-offs: the models are compact (a few billion parameters), and the context window tops out around 4k tokens — plenty for lightweight tasks, but nowhere near state-of-the-art-class reasoning depth.
 
@@ -41,5 +44,6 @@ This is just the beginning. I am looking forward to connecting with folks who ar
 - **Enabling custom on-device LLMs** — there is an enthusiastic community of folks using tools such as [ollama](https://ollama.com/) and [LM Studio](https://lmstudio.ai/) to host their own models. Being able to seamlessly bridge those using the same consistent API for the web will unlock extra power for those who need it.
 - I am curious if there any existing open standards out there this work can get plugged into. If you are familiar with in-browser on-device LLM efforts, please drop me a line!
 
+Project page: [https://llllm.zats.io](https://llllm.zats.io)  
 Reach out on Twitter: [https://x.com/zats](https://x.com/zats)  
 Follow the project on GitHub: [https://github.com/zats/local-llm](https://github.com/zats/local-llm)
