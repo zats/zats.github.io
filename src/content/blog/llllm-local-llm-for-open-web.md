@@ -4,10 +4,9 @@ description: "A cross-platform macOS and iOS app that unlocks Apple’s on-devic
 pubDate: 2025-07-08
 draft: false
 ---
+https://llllm.zats.io
 
 ![llllm logo](/assets/2025-07-08/brain_dev.png)
-
-<center><a href="httpsL//llllm.zats.io">llllm.zats.io</a></center>
 
 ## Introduction
 
