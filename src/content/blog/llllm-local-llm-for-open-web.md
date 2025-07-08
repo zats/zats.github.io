@@ -7,7 +7,7 @@ draft: false
 
 ## Introduction
 
-At WWDC 2025 Apple unveiled Foundation Models, a framework that lets third-party developers run the same on-device LLMs that power features like Notification summaries, Email categorization, and Writing tools. Everything happens locally, so latency is measured in milliseconds, and no personal data ever leaves the device. The trade-offs: the models are compact (a few billion parameters), and the context window tops out around 4k tokens — plenty for lightweight tasks, but nowhere near state-of-the-art-class reasoning depth.
+At WWDC 2025 Apple unveiled [Foundation](https://developer.apple.com/videos/play/wwdc2025/286/) [Models](https://developer.apple.com/videos/play/wwdc2025/301/), a [framework](https://developer.apple.com/documentation/foundationmodels) that lets third-party developers run the same on-device LLMs that power features like Notification summaries, Email categorization, and Writing tools. Everything happens locally, so latency is measured in milliseconds, and no personal data ever leaves the device. The trade-offs: the models are compact (a few billion parameters), and the context window tops out around 4k tokens — plenty for lightweight tasks, but nowhere near state-of-the-art-class reasoning depth.
 
 Apple users upgrade fast (iOS 18 reached 82%, and macOS 15.5 70% in just 90 days). Even though on-device LLM requires modern hardware, the total market is still quite significant. That means in the next 3 months, many people will have access to on-device LLM, many without even knowing it.
 
@@ -36,7 +36,7 @@ Another more expected challenge was shipping the iOS app. We want to provide the
 This is just the beginning. I am looking forward to connecting with folks who are excited to help shape up the future of on-device LLM for the Open Web. Here are a few directions I believe are promising:
 
 - **Unlocking more foundation models, features such as tool calling and serialized outputs** — tapping into more and more features as Apple makes them available will raise the bar for everyone.
-- **Enabling custom on-device LLMs** — there is an enthusiastic community of folks using tools such as `ollama` and `LM Studio` to host their own models. Being able to seamlessly bridge those using the same consistent API for the web will unlock extra power for those who need it.
+- **Enabling custom on-device LLMs** — there is an enthusiastic community of folks using tools such as [ollama](https://ollama.com/) and [LM Studio](https://lmstudio.ai/) to host their own models. Being able to seamlessly bridge those using the same consistent API for the web will unlock extra power for those who need it.
 - I am curious if there any existing open standards out there this work can get plugged into. If you are familiar with in-browser on-device LLM efforts, please drop me a line!
 
 Reach out on Twitter: [https://x.com/zats](https://x.com/zats)  
