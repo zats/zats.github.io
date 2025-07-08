@@ -5,7 +5,7 @@ pubDate: 2025-07-08
 draft: false
 ---
 
-![llllm logo](/assets/2025-07-08/brain.png)
+![llllm logo](/assets/2025-07-08/brain_dev.png)
 
 ## Introduction
 
