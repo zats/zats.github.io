@@ -5,8 +5,6 @@ pubDate: 2025-07-08
 draft: false
 ---
 
-# llllm - LocalLLM for Open Web
-
 ## Introduction
 
 At WWDC 2025 Apple unveiled Foundation Models, a framework that lets third-party developers run the same on-device LLMs that power features like Notification summaries, Email categorization, and Writing tools. Everything happens locally, so latency is measured in milliseconds, and no personal data ever leaves the device. The trade-offs: the models are compact (a few billion parameters), and the context window tops out around 4k tokens — plenty for lightweight tasks, but nowhere near state-of-the-art-class reasoning depth.
@@ -40,8 +38,6 @@ This is just the beginning. I am looking forward to connecting with folks who ar
 - **Unlocking more foundation models, features such as tool calling and serialized outputs** — tapping into more and more features as Apple makes them available will raise the bar for everyone.
 - **Enabling custom on-device LLMs** — there is an enthusiastic community of folks using tools such as `ollama` and `LM Studio` to host their own models. Being able to seamlessly bridge those using the same consistent API for the web will unlock extra power for those who need it.
 - I am curious if there any existing open standards out there this work can get plugged into. If you are familiar with in-browser on-device LLM efforts, please drop me a line!
-
----
 
 Reach out on Twitter: [https://x.com/zats](https://x.com/zats)  
 Follow the project on GitHub: [https://github.com/zats/local-llm](https://github.com/zats/local-llm)
