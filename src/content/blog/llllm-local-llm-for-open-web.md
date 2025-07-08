@@ -40,8 +40,8 @@ Another more expected challenge was shipping the iOS app. We want to provide the
 
 This is just the beginning. I am looking forward to connecting with folks who are excited to help shape up the future of on-device LLM for the Open Web. Here are a few directions I believe are promising:
 
-- **Unlocking more foundation models, features such as tool calling and serialized outputs** — tapping into more and more features as Apple makes them available will raise the bar for everyone.
-- **Enabling custom on-device LLMs** — there is an enthusiastic community of folks using tools such as [ollama](https://ollama.com/) and [LM Studio](https://lmstudio.ai/) to host their own models. Being able to seamlessly bridge those using the same consistent API for the web will unlock extra power for those who need it.
+- Unlocking more foundation models, features such as tool calling and serialized outputs — tapping into more and more features as Apple makes them available will raise the bar for everyone.
+- Enabling custom on-device LLMs — there is an enthusiastic community of folks using tools such as [ollama](https://ollama.com/) and [LM Studio](https://lmstudio.ai/) to host their own models. Being able to seamlessly bridge those using the same consistent API for the web will unlock extra power for those who need it.
 - I am curious if there any existing open standards out there this work can get plugged into. If you are familiar with in-browser on-device LLM efforts, please drop me a line!
 
 Project page: [https://llllm.zats.io](https://llllm.zats.io)  
