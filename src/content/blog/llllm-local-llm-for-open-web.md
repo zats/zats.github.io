@@ -5,6 +5,8 @@ pubDate: 2025-07-08
 draft: false
 ---
 
+![llllm logo](/assets/2025-07-08/brain.png)
+
 ## Introduction
 
 At WWDC 2025 Apple unveiled [Foundation](https://developer.apple.com/videos/play/wwdc2025/286/) [Models](https://developer.apple.com/videos/play/wwdc2025/301/), a [framework](https://developer.apple.com/documentation/foundationmodels) that lets third-party developers run the same on-device LLMs that power features like Notification summaries, Email categorization, and Writing tools. Everything happens locally, so latency is measured in milliseconds, and no personal data ever leaves the device. The trade-offs: the models are compact (a few billion parameters), and the context window tops out around 4k tokens — plenty for lightweight tasks, but nowhere near state-of-the-art-class reasoning depth.
