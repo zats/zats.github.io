@@ -47,5 +47,5 @@ Project page: [https://llllm.zats.io](https://llllm.zats.io)
 Reach out on Twitter: [https://x.com/zats](https://x.com/zats)  
 Follow the project on GitHub: [https://github.com/zats/local-llm](https://github.com/zats/local-llm)
 
-**Update 07/09/2025**: It appears that Google Chrome will start shipping API requiring users to download a local model code named Gemini Nano. This is a great development, however it does rely on folks to download a multi-gigabyte file before they can use this in exchange for higher performance. As such, it makes the solution closer to ollama and LM Studio. Read more about it here https://www.swyx.io/gemini-nano.
+**Update 07/09/2025**: It appears that Google Chrome will start shipping API requiring users to download a local model code named Gemini Nano. This is a great development, however it does rely on folks to download a multi-gigabyte file before they can use this in exchange for higher performance. As such, it makes the solution closer to ollama and LM Studio. Read more about the API and requirements here https://developer.chrome.com/docs/ai/prompt-api.
 
