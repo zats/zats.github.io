@@ -58,41 +58,33 @@ export const { GET, getStaticPaths } = OGImageRoute({
   },
 });
 
-// Deterministic gradient generator based on slug
+// Deterministic, aesthetically tuned two-stop palette in OKLCH → sRGB
 function gradientFromSlug(slug: string) {
-  const rnd = mulberry32(hashString(slug));
-  const base = Math.floor(rnd() * 360);
-  const variant = rnd();
-  // Keep backgrounds dark for readable white text
-  const s = 68 + rnd() * 20; // 68–88% saturation
-  const l1 = 26 + rnd() * 4; // 26–30% lightness
-  const l2 = l1 + 6;         // +6
-  const l3 = l2 + 6;         // +12
-
-  let hues: number[];
-  if (variant < 0.45) {
-    // Analogous cluster (safe & smooth)
-    const offset = 12 + rnd() * 10; // 12–22°
-    hues = [wrap(base - offset), base, wrap(base + offset)];
-  } else if (variant < 0.8) {
-    // Split complementary — pleasing contrast without clashing
-    const off = 30 + rnd() * 15; // 30–45° from complement
-    hues = [base, wrap(base + 180 - off), wrap(base + 180 + off)];
+  const rnd = mulberry32(hashString(slug + ':stops'));
+  const toRGB = converter('rgb');
+  const baseHue = Math.floor(rnd() * 360);
+  const scheme = rnd();
+  let h1 = baseHue;
+  let h2: number;
+  if (scheme < 0.7) {
+    const offset = 18 + rnd() * 10; // 18–28° analogous
+    h2 = wrap(baseHue + (rnd() < 0.5 ? -offset : offset));
   } else {
-    // Golden-angle duo for interesting two-stop gradients
-    const golden = 137.5;
-    hues = [base, wrap(base + golden)];
+    const off = 28 + rnd() * 8; // 28–36° off complement
+    h2 = wrap(baseHue + 180 + (rnd() < 0.5 ? -off : off));
   }
-
-  let baseStops = hues.map((h, i) => hslToRgb(h, s, i === 0 ? l1 : i === 1 ? l3 : l2));
-  if (baseStops.length < 2) baseStops.push(hslToRgb(wrap(base + 180), s, l3));
-  // Always two-color gradient: pick two most distinct stops
-  let stops = [baseStops[0], baseStops[baseStops.length - 1]] as [number, number, number][];
-
-  // Randomly flip direction (top↔bottom) to vary perceived direction
-  if (rnd() < 0.5) stops.reverse();
-
-  return stops;
+  const Lbase = 0.60 + (rnd() - 0.5) * 0.06; // 0.57–0.63
+  const dL = 0.06;
+  const C = 0.14 + rnd() * 0.06; // 0.14–0.20
+  const ok1 = { mode: 'oklch', l: Math.max(0, Math.min(1, Lbase - dL / 2)), c: C, h: h1 } as any;
+  const ok2 = { mode: 'oklch', l: Math.max(0, Math.min(1, Lbase + dL / 2)), c: C, h: h2 } as any;
+  const s1 = toRGB(ok1) as { r?: number; g?: number; b?: number };
+  const s2 = toRGB(ok2) as { r?: number; g?: number; b?: number };
+  const clamp255 = (v?: number) => Math.max(0, Math.min(255, Math.round((v ?? 0) * 255)));
+  return [
+    [clamp255(s1.r), clamp255(s1.g), clamp255(s1.b)],
+    [clamp255(s2.r), clamp255(s2.g), clamp255(s2.b)],
+  ];
 }
 
 function borderFromStops(stops: [number, number, number][]) {
@@ -198,14 +190,16 @@ async function renderMeshGradientPng(width: number, height: number, seed: string
   const marginX = 0.08, marginY = 0.08;
   type Point = { x: number; y: number; rgb: [number, number, number]; sigma2: number };
   const points: Point[] = [];
+  const clusters = [0.25, 0.5, 0.75];
   for (let i = 0; i < N; i++) {
     const baseX = halton(i, 2), baseY = halton(i, 3);
-    const jx = (rnd() - 0.5) * 0.1, jy = (rnd() - 0.5) * 0.1; // jitter
+    const jx = (rnd() - 0.5) * 0.06, jy = (rnd() - 0.5) * 0.06; // smaller jitter
     const x = clamp(marginX + (1 - 2 * marginX) * clamp(baseX + jx));
     const y = clamp(marginY + (1 - 2 * marginY) * clamp(baseY + jy));
 
-    // Choose t along gradient with slight local variation
-    let t = clamp(halton(i, 5) + (rnd() - 0.5) * 0.25);
+    // Choose t along gradient from soft clusters to keep harmony
+    const center = clusters[i % clusters.length];
+    let t = clamp(center + (rnd() - 0.5) * 0.18);
     const c = toRGB(mixOKLCH(t)) as { r?: number; g?: number; b?: number };
     let rgb: [number, number, number] = [
       Math.round(clamp(c.r ?? 0) * 255),
@@ -213,20 +207,13 @@ async function renderMeshGradientPng(width: number, height: number, seed: string
       Math.round(clamp(c.b ?? 0) * 255),
     ];
 
-    // Occasionally use a complementary accent or light/darken
-    const tweak = rnd();
-    if (tweak < 0.2) { // complement
-      const hsl = rgbToHsl(rgb[0], rgb[1], rgb[2]);
-      const comp = hslToRgb(wrap(hsl.h + 180), hsl.s, Math.min(70, hsl.l + 10));
-      rgb = comp;
-    } else if (tweak < 0.5) { // lighten/darken
-      const factor = 0.85 + rnd() * 0.3; // 0.85..1.15
-      rgb = [
-        Math.max(0, Math.min(255, Math.round(rgb[0] * factor))),
-        Math.max(0, Math.min(255, Math.round(rgb[1] * factor))),
-        Math.max(0, Math.min(255, Math.round(rgb[2] * factor))),
-      ];
-    }
+    // Gentle light/dark tweak only (keep palette cohesive)
+    const factor = 0.94 + rnd() * 0.12; // 0.94..1.06
+    rgb = [
+      Math.max(0, Math.min(255, Math.round(rgb[0] * factor))),
+      Math.max(0, Math.min(255, Math.round(rgb[1] * factor))),
+      Math.max(0, Math.min(255, Math.round(rgb[2] * factor))),
+    ];
 
     // Each point gets its own spread
     const baseSigma = Math.min(width, height) * (0.18 + 0.2 * rnd());
