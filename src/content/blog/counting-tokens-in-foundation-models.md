@@ -2,14 +2,14 @@
 title: "Counting tokens in Foundation Models"
 description: "Understanding Apple’s Foundation Models Context Window: A Comparison with OpenAI’s Tokenization."
 pubDate: 2025-08-26
-draft: true
+draft: false
 ---
 
 # Apple’s Foundation Models: context limits, missing tokenizers, and a practical way to measure usage
 
-Apple’s Foundation Models cap the context window at **4,096 tokens**. Apple’s docs also say a token is roughly **3–4 characters** for Latin scripts. Apple does not expose a tokenizer API, and there is no response metadata with token usage. The framework handles tokenization under the hood, and if you cross the budget you receive an error. ([Apple Developer](https://developer.apple.com/documentation/FoundationModels/generating-content-and-performing-tasks-with-foundation-models?utm_source=chatgpt.com "Generating content and performing tasks with Foundation ..."))
+Apple’s Foundation Models cap the context window at 4,096 tokens (per Apple’s developer guidance). There’s no public tokenizer API or usage metadata; tokenization happens internally and crossing the limit throws an error.
 
-External providers take the opposite approach. OpenAI publishes tokenizers, returns usage in API responses, and even ships multiple encodings you can select for analysis and benchmarking. That exists in part because usage is billable, but even if Apple does not bill per token, the **4096** hard stop still damages UX when you misestimate. ([OpenAI Cookbook](https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken?utm_source=chatgpt.com "How to count tokens with Tiktoken"), [OpenAI Platform](https://platform.openai.com/docs/api-reference?utm_source=chatgpt.com "API Reference - OpenAI API"))
+External providers take the opposite approach. OpenAI publishes tokenizers, returns usage in API responses. That exists partly because usage is billable, but even if Apple does not bill per token, the 4096 hard stop still damages UX when you misestimate.
 
 Below is the measurement setup I used to make sense of this in production code without relying on Apple-internal tokenization.
 
@@ -17,7 +17,7 @@ Below is the measurement setup I used to make sense of this in production code w
 
 ## Estimating context in FoundationModels
 
-I attach a listener to the `LanguageModelSession` stream and aggregate only visible text across instructions, prompts, and responses. That gives me a consistent character baseline.
+I attach a session listener and sum visible text segments across instructions, prompts, and responses. That yields a simple character baseline. It ignores structured output / tool calls (and obviously will result in undercounting).
 
 ```swift
 public var estimatedTextCharacters: Int {
@@ -38,19 +38,7 @@ public var estimatedTextCharacters: Int {
 }
 ```
 
-Apple’s rule of thumb is 3–4 characters per token. In my English-only tests, the empirical average was closer to **4.2** characters per token, so I use a simple heuristic estimator:
-
-```swift
-public func estimatedTokenCount(charsPerToken: Double = 4.2) -> Int {
-    guard charsPerToken > 0 else { return 0 }
-    let chars = Double(estimatedTextCharacters)
-    return Int(ceil(chars / charsPerToken))
-}
-```
-
-This catches most cases before you hit the framework’s `exceededContextWindowSize` error. ([Apple Developer](https://developer.apple.com/documentation/FoundationModels/generating-content-and-performing-tasks-with-foundation-models?utm_source=chatgpt.com "Generating content and performing tasks with Foundation ..."))
-
-To keep the text I am actually counting aligned with what the user sees, I also concatenate the visible segments:
+Apple’s rule of thumb: 3–4 characters per token. My English‑only runs averaged ~4.2; to keep the text I concatenate the visible segments like so:
 
 ```swift
 public var estimatedTotalText: String {
@@ -75,7 +63,7 @@ public var estimatedTotalText: String {
 
 ## Cross-checking with OpenAI tokenizers, including GPT-OSS
 
-Heuristics are not enough for careful benchmarks, so I also tokenize the same transcript with OpenAI’s encoders via **TiktokenSwift** (Swift bindings to OpenAI’s `tiktoken`). This gives precise counts for `cl100k_base` (GPT-3.5/4), `o200k_base` (GPT-4o family), and **`o200k_harmony` used by GPT-OSS**. ([GitHub](https://github.com/narner/TiktokenSwift?utm_source=chatgpt.com "narner/TiktokenSwift: Swift bindings for OpenAI's tiktoken ..."), [OpenAI](https://openai.com/index/introducing-gpt-oss/?utm_source=chatgpt.com "Introducing gpt-oss"))
+Heuristics are not enough for careful benchmarks, so I also tokenize the same transcript with OpenAI’s encoders via [TiktokenSwift](https://github.com/narner/TiktokenSwift) (Swift bindings to OpenAI’s `tiktoken`). This gives precise counts for `cl100k_base` (GPT-3.5/4), `o200k_base` (GPT-4o family), and `o200k_harmony` used by GPT-OSS.
 
 ```swift
 public enum TokenCountModel {
@@ -101,19 +89,19 @@ public func estimatedTokenCount(per model: TokenCountModel) async -> Int {
 }
 ```
 
-OpenAI documented and open-sourced the `o200k_harmony` tokenizer with the GPT-OSS release, which is why you can validate against it locally. ([OpenAI](https://openai.com/index/introducing-gpt-oss/?utm_source=chatgpt.com "Introducing gpt-oss"), [Modal](https://modal.com/blog/what-is-o200k-harmony?utm_source=chatgpt.com "What is o200k Harmony? OpenAI's latest edition to their ..."))
+OpenAI open‑sourced `o200k_harmony` with GPT‑OSS, so you can validate locally (see the GPT‑OSS announcement and Modal’s deep dive if you want background theory).
 
 ---
 
-## Result that motivated this post
+## What triggered this write‑up
 
-Across English prose, OpenAI encoders consistently counted about **25% fewer tokens** than the Apple-side heuristic would imply, which means the same text fits noticeably further within the window when measured by OpenAI’s tokenizers. Treat this as a practical observation from my runs, not a universal constant. Content type matters: prose is efficient, emoji and code are not.
+Across English prose, OpenAI encoders counted ~25% fewer tokens than the Apple‑side heuristic implied; the same text fits further in the window when measured precisely. It’s an observation from my runs, not a constant. Content type matters: English prose compresses well; other languages, emoji, and code do not.
 
 ---
 
 ## Stream-time guardrail in the app
 
-I surface a running estimate and a short status line during generation, so I can trim or restart before the hard stop:
+I surface a running estimate and a short status line during generation. Goal: trim or restart before the hard stop.
 
 ```swift
 let result = await TokenUsageEstimator.buildSummary(
@@ -126,13 +114,13 @@ await MainActor.run {
 }
 ```
 
-This pattern exists because Apple does not let you replace or query the tokenizer, and there is no usage field in responses to rely on. By contrast, OpenAI returns usage in API responses and ships official tokenizers you can run offline for exact counts. ([Apple Developer](https://developer.apple.com/forums/forums/topics/machine-learning-and-ai?utm_source=chatgpt.com "Machine Learning & AI - Apple Developer Forums"), [OpenAI Cookbook](https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken?utm_source=chatgpt.com "How to count tokens with Tiktoken"))
+We approximate proactively instead of reacting after a failure (no public tokenizer or usage counts). OpenAI, by contrast, returns usage inline and ships tokenizers you can run locally.
+
+In a follow‑up I’ll cover strategies to stretch effective context—sliding windows, opportunistic summarization near a threshold, hierarchical condensation of older turns, selective retention of tool outputs—so you degrade gracefully instead of slamming into 4,096. Stay tuned.
 
 ---
 
 ## Practical implications
 
-* Treat **4096** as a strict budget and build preflight checks plus stream-time telemetry. Apple’s guidance is approximate, the failure mode is abrupt. ([Apple Developer](https://developer.apple.com/documentation/FoundationModels/generating-content-and-performing-tasks-with-foundation-models?utm_source=chatgpt.com "Generating content and performing tasks with Foundation ..."))
-* Validate with real tokenizers when you benchmark or compare models. The **`tiktoken`** family, including the **GPT-OSS** `o200k_harmony` encoding, is available through **TiktokenSwift** for Swift projects. ([GitHub](https://github.com/narner/TiktokenSwift?utm_source=chatgpt.com "narner/TiktokenSwift: Swift bindings for OpenAI's tiktoken ..."), [OpenAI](https://openai.com/index/introducing-gpt-oss/?utm_source=chatgpt.com "Introducing gpt-oss"))
-
-If you want, I can add a compact table that contrasts counts for prose, emoji-heavy text, and code across `cl100k_base`, `o200k_base`, and `o200k_harmony`, using your transcript collector and the exact snippets above.
+* Treat 4096 as a strict budget; add preflight checks and stream telemetry. The failure mode is abrupt.
+* Benchmark with real tokenizers. `tiktoken` (via TiktokenSwift) lets you profile `cl100k_base`, `o200k_base`, `o200k_harmony` locally, but will perform way better than what you will likely see with Apple Foundation Model.
