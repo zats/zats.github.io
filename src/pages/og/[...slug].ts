@@ -3,7 +3,9 @@ import { SITE_TITLE, SITE_DESCRIPTION, OG_VERSION } from '../../consts';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
+import { interpolate, converter } from 'culori';
 import { OGImageRoute } from 'astro-og-canvas';
+const GRADIENT_VERSION = 4; // bump to regenerate bg PNGs when algo changes
 
 // Build a mapping from blog post slug to its frontmatter data
 const posts = await getCollection('blog');
@@ -21,9 +23,8 @@ export const { GET, getStaticPaths } = OGImageRoute({
   getImageOptions: async (routePath, data) => {
     const seed = routePath ?? data.title ?? 'og';
     const stops = gradientFromSlug(seed);
-    const angle = randomAngle(seed);
     const cacheBase = pathForCacheBase();
-    const bgPath = await ensureGradientImage(cacheBase, seed, 1200, 630, stops, angle);
+    const bgPath = await ensureMeshGradientImage(cacheBase, seed, 1200, 630, stops);
     const borderColor = borderFromStops(stops);
     return {
       cacheDir: path.join(cacheBase, 'og-canvas'),
@@ -32,7 +33,7 @@ export const { GET, getStaticPaths } = OGImageRoute({
       width: 1200,
       height: 630,
       padding: 72,
-      // Base gradient (will be fully covered by bgImage)
+      // Base gradient (covered by mesh bgImage, but kept for safety)
       bgGradient: stops,
       bgImage: {
         path: bgPath,
@@ -155,19 +156,12 @@ function rgbToHsl(r: number, g: number, b: number) {
 
 function wrap(x: number) { return (x % 360 + 360) % 360; }
 
-function randomAngle(seed: string): number {
-  const rnd = mulberry32(hashString(seed + ':angle'));
-  // Avoid near-vertical-only; choose any angle 0–360 but bias away from 0/180 by adding +/-15°
-  const a = Math.floor(rnd() * 360);
-  return (a + 15) % 360;
-}
-
 function pathForCacheBase() {
   return path.resolve(process.cwd(), 'node_modules', '.astro-og-canvas', `v${OG_VERSION}`);
 }
 
-async function ensureGradientImage(baseDir: string, seed: string, width: number, height: number, stops: [number, number, number][], angleDeg: number): Promise<string> {
-  const key = `g-${hashString(JSON.stringify({ seed, width, height, stops, angleDeg }))}.png`;
+async function ensureMeshGradientImage(baseDir: string, seed: string, width: number, height: number, stops: [number, number, number][]): Promise<string> {
+  const key = `mesh-${hashString(JSON.stringify({ v: GRADIENT_VERSION, seed, width, height, stops }))}.png`;
   const bgDir = path.join(baseDir, 'bg');
   const filePath = path.join(bgDir, key);
   try {
@@ -175,45 +169,108 @@ async function ensureGradientImage(baseDir: string, seed: string, width: number,
     return filePath;
   } catch {}
   await fs.mkdir(bgDir, { recursive: true });
-  const buffer = await renderLinearGradientPng(width, height, stops, angleDeg);
+  const buffer = await renderMeshGradientPng(width, height, seed, stops);
   await fs.writeFile(filePath, buffer);
   return filePath;
 }
 
-async function renderLinearGradientPng(width: number, height: number, stops: [number, number, number][], angleDeg: number): Promise<Buffer> {
-  const channels = 3; // RGB
+async function renderMeshGradientPng(width: number, height: number, seed: string, stops: [number, number, number][]): Promise<Buffer> {
+  const channels = 3;
   const data = Buffer.alloc(width * height * channels);
-  const angle = (angleDeg * Math.PI) / 180;
-  const ux = Math.cos(angle);
-  const uy = Math.sin(angle);
-  const halfW = width / 2;
-  const halfH = height / 2;
-  const denom = Math.abs(ux) * halfW + Math.abs(uy) * halfH || 1;
+  const rnd = mulberry32(hashString(seed + ':mesh'));
 
-  // Helper to sample the gradient with 2 or 3 stops
-  const sample = (t: number): [number, number, number] => {
-    t = Math.max(0, Math.min(1, t));
-    if (stops.length === 2) {
-      return interpolateRgb(stops[0], stops[1], t);
-    } else {
-      if (t <= 0.5) return interpolateRgb(stops[0], stops[1], t * 2);
-      return interpolateRgb(stops[1], stops[2], (t - 0.5) * 2);
-    }
+  // Utilities
+  const toHex = (rgb: [number, number, number]) => '#' + rgb.map((v) => Math.max(0, Math.min(255, v)).toString(16).padStart(2, '0')).join('');
+  const toRGB = converter('rgb');
+  const mixOKLCH = interpolate([toHex(stops[0]), toHex(stops[1])], 'oklch');
+  const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+  const p = (min: number, max: number) => min + (max - min) * rnd();
+
+  // Halton low-discrepancy sequence for well-spaced positions
+  const halton = (index: number, base: number) => {
+    let f = 1, r = 0; let i = index + 1;
+    while (i > 0) { f = f / base; r = r + f * (i % base); i = Math.floor(i / base); }
+    return r;
   };
 
+  // Build N control points: positions + color + individual sigma
+  const N = 18; // more control points for richer meshes (trade-off perf)
+  const marginX = 0.08, marginY = 0.08;
+  type Point = { x: number; y: number; rgb: [number, number, number]; sigma2: number };
+  const points: Point[] = [];
+  for (let i = 0; i < N; i++) {
+    const baseX = halton(i, 2), baseY = halton(i, 3);
+    const jx = (rnd() - 0.5) * 0.1, jy = (rnd() - 0.5) * 0.1; // jitter
+    const x = clamp(marginX + (1 - 2 * marginX) * clamp(baseX + jx));
+    const y = clamp(marginY + (1 - 2 * marginY) * clamp(baseY + jy));
+
+    // Choose t along gradient with slight local variation
+    let t = clamp(halton(i, 5) + (rnd() - 0.5) * 0.25);
+    const c = toRGB(mixOKLCH(t)) as { r?: number; g?: number; b?: number };
+    let rgb: [number, number, number] = [
+      Math.round(clamp(c.r ?? 0) * 255),
+      Math.round(clamp(c.g ?? 0) * 255),
+      Math.round(clamp(c.b ?? 0) * 255),
+    ];
+
+    // Occasionally use a complementary accent or light/darken
+    const tweak = rnd();
+    if (tweak < 0.2) { // complement
+      const hsl = rgbToHsl(rgb[0], rgb[1], rgb[2]);
+      const comp = hslToRgb(wrap(hsl.h + 180), hsl.s, Math.min(70, hsl.l + 10));
+      rgb = comp;
+    } else if (tweak < 0.5) { // lighten/darken
+      const factor = 0.85 + rnd() * 0.3; // 0.85..1.15
+      rgb = [
+        Math.max(0, Math.min(255, Math.round(rgb[0] * factor))),
+        Math.max(0, Math.min(255, Math.round(rgb[1] * factor))),
+        Math.max(0, Math.min(255, Math.round(rgb[2] * factor))),
+      ];
+    }
+
+    // Each point gets its own spread
+    const baseSigma = Math.min(width, height) * (0.18 + 0.2 * rnd());
+    const sigma2 = baseSigma * baseSigma;
+    points.push({ x: x * width, y: y * height, rgb, sigma2 });
+  }
+
+  // Subtle vignette and grain
+  const centerX = width / 2, centerY = height / 2;
+  const maxR = Math.hypot(centerX, centerY);
+  const noise = mulberry32(hashString(seed + ':noise'));
+
   for (let y = 0; y < height; y++) {
-    const Py = y - halfH;
     for (let x = 0; x < width; x++) {
-      const Px = x - halfW;
-      const proj = (Px * ux + Py * uy) / denom; // -1..1
-      const t = (proj + 1) / 2; // 0..1
-      const [r, g, b] = sample(t);
+      let wr = 0, wg = 0, wb = 0, wsum = 0;
+      for (const pt of points) {
+        const dx = x - pt.x, dy = y - pt.y;
+        const w = Math.exp(-(dx * dx + dy * dy) / (2 * pt.sigma2));
+        wr += w * pt.rgb[0];
+        wg += w * pt.rgb[1];
+        wb += w * pt.rgb[2];
+        wsum += w;
+      }
+      let r = wr / (wsum || 1);
+      let g = wg / (wsum || 1);
+      let b = wb / (wsum || 1);
+
+      // Vignette
+      const rr = Math.hypot(x - centerX, y - centerY) / maxR;
+      const vignette = 1 - 0.10 * rr * rr;
+      r *= vignette; g *= vignette; b *= vignette;
+
+      // Fine grain
+      const gn = (noise() - 0.5) * 4; // +/-2 levels in 0..255
+      r = Math.max(0, Math.min(255, r + gn));
+      g = Math.max(0, Math.min(255, g + gn));
+      b = Math.max(0, Math.min(255, b + gn));
+
       const idx = (y * width + x) * channels;
       data[idx] = r;
       data[idx + 1] = g;
       data[idx + 2] = b;
     }
   }
-  const img = sharp(data, { raw: { width, height, channels } }).png();
-  return await img.toBuffer();
+
+  return await sharp(data, { raw: { width, height, channels } }).png().toBuffer();
 }
