@@ -1,10 +1,11 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 ---
 
 <html lang="en">
   <head>
-    <BaseHead title="Redirecting..." description="Redirecting to blog" />
+    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} ogImageUrl="/og/index.png" />
     <script>
       window.location.href = '/blog';
     </script>
