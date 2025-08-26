@@ -7,8 +7,8 @@ import { interpolate, converter } from 'culori';
 import { OGImageRoute } from 'astro-og-canvas';
 const GRADIENT_VERSION = 4; // bump to regenerate bg PNGs when algo changes
 
-// Build a mapping from blog post slug to its frontmatter data
-const posts = await getCollection('blog');
+// Build a mapping from blog post slug to its frontmatter data (exclude drafts in prod)
+const posts = await getCollection('blog', ({ data }) => import.meta.env.DEV || !data.draft);
 const pages: Record<string, any> = Object.fromEntries(posts.map((p) => [p.id, p.data]));
 
 // Add a root entry for the homepage OG image
