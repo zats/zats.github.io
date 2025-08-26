@@ -14,8 +14,9 @@
     "@astrojs/rss": "^4.0.12",
     "@astrojs/sitemap": "^3.5.1",
     "astro": "^5.13.3",
-    "culori": "^4.0.1",
+    "culori": "^4.0.2",
     "astro-og-canvas": "^0.7.0",
+    "canvaskit-wasm": "^0.40.0",
     "sharp": "^0.34.2",
     "shiki": "^3.11.0"
   }
