@@ -5,6 +5,8 @@ pubDate: 2025-09-03
 draft: false
 ---
 
+![](/assets/2025-09-03/image.jpg)
+
 ## Managing context window
 
 People who work with large language models know that one important way in which they differ is the size of the context window. Google has been consistently impressing the developer community by releasing LLMs with increasingly large context windows, [1 million tokens and beyond](https://blog.google/technology/ai/google-gemini-next-generation-model-february-2024/). What this means in reality is that you can ingest more information and interact with LLMs about ever larger corpora of information. Great examples of use cases include ingesting your entire codebase and asking questions about it or putting a lot of documents relevant to your business into the window and asking the model to cross-reference them.
