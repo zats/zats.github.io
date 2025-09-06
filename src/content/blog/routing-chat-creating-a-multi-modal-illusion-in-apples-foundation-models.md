@@ -1,12 +1,10 @@
 ---
-title: "Making the most of Apple Foundation Models: Bringing More Capabilities to Apple Foundation Models"
+title: "Making the most of Apple Foundation Models: More Capabilities"
 description: "Integrating more capabilities into Apple Foundation Models by classifying intent and directing requests to the right tool while keeping a single, seamless user experience."
 pubDate: 2025-09-25
 draft: false
+heroImage: "/assets/2025-09-05/multi-modal.jpg"
 ---
-
-![](/assets/2025-09-05/multi-modal.jpg)
-
 
 The evolution of models took us from text-only models that generate text, to image-only, to many more modalities, and eventually to multi-modal models. Multi-modal models can generate multiple content types at once. The advantage is that they represent text, images, and other modalities in the same latent space, which enables seamless integration and high precision when you operate on images or text, switching between modalities effortlessly.
 

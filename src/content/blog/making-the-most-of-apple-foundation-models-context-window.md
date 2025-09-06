@@ -3,9 +3,8 @@ title: "Making the most of Apple Foundation Models: Context Window"
 description: "How to manage Apple’s 4096-token limit with sliding windows, summarization, and selective retention."
 pubDate: 2025-09-03
 draft: false
+heroImage: "/assets/2025-09-03/image.jpg"
 ---
-
-![](/assets/2025-09-03/image.jpg)
 
 ## Managing context window
 

@@ -3,10 +3,10 @@ title: "llllm - LocalLLM for Open Web"
 description: "A cross-platform macOS and iOS app that unlocks Apple’s on-device LLMs for any website, offering OpenAI-compatible APIs for privacy-preserving, low-latency AI directly in Safari, Chrome, and beyond. It bridges native-only limitations with a seamless developer and user experience."
 pubDate: 2025-07-08
 draft: false
+heroImage: "/assets/2025-07-08/brain_dev.png"
 ---
-https://llllm.zats.io
 
-![llllm logo](/assets/2025-07-08/brain_dev.png)
+https://llllm.zats.io
 
 ## Introduction
 

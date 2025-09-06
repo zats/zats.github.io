@@ -3,6 +3,7 @@ title: "Counting tokens in Foundation Models"
 description: "Understanding Apple’s Foundation Models Context Window: A Comparison with OpenAI’s Tokenization."
 pubDate: 2025-08-26
 draft: false
+heroImage: "/assets/2025-08-26/image.jpg"
 ---
 
 # Apple’s Foundation Models: context limits, missing tokenizers, and a practical way to measure usage
