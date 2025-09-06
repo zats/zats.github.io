@@ -2,7 +2,7 @@
 title: "Making the most of Apple Foundation Models: Bringing More Capabilities to Apple Foundation Models"
 description: "Integrating more capabilities into Apple Foundation Models by classifying intent and directing requests to the right tool while keeping a single, seamless user experience."
 pubDate: 2025-09-25
-draft: true
+draft: false
 ---
 
 ![](/assets/2025-09-05/multi-modal.jpg)
