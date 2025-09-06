@@ -13,7 +13,11 @@ const { title, description, pubDate, updatedDate, heroImage, slug } = Astro.prop
 
 <html lang="en">
 	<head>
-		<BaseHead title={title} description={description} ogImageUrl={slug ? `/og/${slug}.png` : undefined} />
+<BaseHead
+  title={title}
+  description={description}
+  ogImageUrl={heroImage ? heroImage : slug ? `/og/${slug}.png` : undefined}
+/>
 		<style>
 			article {
 				max-width: 83.2ex;
