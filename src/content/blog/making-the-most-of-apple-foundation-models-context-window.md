@@ -53,6 +53,8 @@ Not all information in a chat is equally important. As the LLM receives informat
 
 ## Deep dive, opportunistic summarization with Apple Foundation Models
 
+<img src="/assets/2025-09-03/example.gif" width="70%"/>
+
 We start by building on a [previous post](/blog/counting-tokens-in-foundation-models/) where I use a token estimation technique (heuristic length estimation — Apple does not expose a tokenizer publicly). Sadly, it is not as precise as I would like, and this is still a big gap for robust solutions. Apple does not publish a tokenizer or usage metadata, so any estimator is heuristic. You should be aware that the context can run out quicker if you use characters that tokenize into many pieces, for example emojis, or if you generate code or text in non-Latin languages. There is no public “Apple embeddings dictionary,” so treat this as an empirical note rather than a guarantee (see lack of published tokenizer details in the same [documentation](https://developer.apple.com/documentation/foundationmodels)).
 
 Once we reach an arbitrary threshold of 70 percent, we take the transcript of the conversation and reduce it into text. A critical detail about the threshold is that if you do it too late, the second LLM you set up to summarize will fail with the same out-of-context error. Be conservative if you expect long-running conversations. Here is one way to implement it, specifics will depend on your product use cases:
