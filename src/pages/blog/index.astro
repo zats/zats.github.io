@@ -5,9 +5,25 @@ import SocialFooter from '../../components/SocialFooter.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
 import FormattedDate from '../../components/FormattedDate.astro';
+import { makeSquareThumbs } from '../../lib/thumb';
 
 const posts = (await getCollection('blog', ({ data }) => import.meta.env.DEV || !data.draft)).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+// Precompute crisp square thumbnails (1x/2x DPR) from hero images at build time
+const items = await Promise.all(
+  posts.map(async (post) => {
+    const hero = post.data.heroImage;
+    if (!hero) return { post, thumbs: null as null | { x1: string; x2: string } };
+    try {
+      const thumbs = await makeSquareThumbs(hero, 84);
+      return { post, thumbs };
+    } catch (err) {
+      // Fallback to original image if processing fails
+      return { post, thumbs: null };
+    }
+  }),
 );
 ---
 
@@ -62,6 +78,8 @@ const posts = (await getCollection('blog', ({ data }) => import.meta.env.DEV || 
 				border-radius: 14px;
 				overflow: hidden;
 				flex-shrink: 0;
+				/* Center thumbnail vertically within the grid row */
+				align-self: center;
 				border: 1px solid rgba(0, 0, 0, 0.08);
 			}
 			.thumb img {
@@ -85,26 +103,33 @@ const posts = (await getCollection('blog', ({ data }) => import.meta.env.DEV || 
 		<main>
 			<section>
 				<ul>
-					{
-						posts.map((post) => (
-							<li>
-								<a class="post-link" href={`/blog/${post.id}/`}>
-									<div class="meta">
-										<h4 class="title">{post.data.title}</h4>
-										<p class="date">
-											<FormattedDate date={post.data.pubDate} />
-										</p>
-										<p class="description">{post.data.description}</p>
-									</div>
-									{post.data.heroImage && (
-										<div class="thumb" aria-hidden="true">
-											<img src={post.data.heroImage} alt="" loading="lazy" />
-										</div>
-									)}
-								</a>
-							</li>
-						))
-					}
+                {
+                    items.map(({ post, thumbs }) => (
+                        <li>
+                            <a class="post-link" href={`/blog/${post.id}/`}>
+                                <div class="meta">
+                                    <h4 class="title">{post.data.title}</h4>
+                                    <p class="date">
+                                        <FormattedDate date={post.data.pubDate} />
+                                    </p>
+                                    <p class="description">{post.data.description}</p>
+                                </div>
+                                {post.data.heroImage && (
+                                    <div class="thumb" aria-hidden="true">
+                                        <img
+                                            width="84"
+                                            height="84"
+                                            src={thumbs ? thumbs.x1 : post.data.heroImage}
+                                            srcset={thumbs ? `${thumbs.x1} 1x, ${thumbs.x2} 2x` : undefined}
+                                            alt=""
+                                            loading="lazy"
+                                        />
+                                    </div>
+                                )}
+                            </a>
+                        </li>
+                    ))
+                }
 				</ul>
 			</section>
 		</main>
