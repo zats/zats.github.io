@@ -72,16 +72,16 @@ const items = await Promise.all(
 			}
 
 			/* Right-aligned square thumbnail */
-			.thumb {
-				width: 84px;
-				height: 84px;
-				border-radius: 14px;
-				overflow: hidden;
-				flex-shrink: 0;
-				/* Center thumbnail vertically within the grid row */
-				align-self: center;
-				border: 1px solid rgba(0, 0, 0, 0.08);
-			}
+                        .thumb {
+                                width: 84px;
+                                height: 84px;
+                                border-radius: 14px;
+                                overflow: hidden;
+                                flex-shrink: 0;
+                                /* Align thumbnail with the top of the text block */
+                                align-self: start;
+                                border: 1px solid rgba(0, 0, 0, 0.08);
+                        }
 			.thumb img {
 				width: 100%;
 				height: 100%;
